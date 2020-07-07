@@ -7,6 +7,8 @@ We threw out some ideas a few weeks ago, but nothing concrete. I don't remember 
 ## The Tech Stack
 We'll be creating the game with Pygame. Art will either be hand-drawn, or freely available assets found online. That's pretty much it.
 
+hi im caleb
+
 ## TODO:
-(edit as the project progresses
+(edit as the project progresses)
 * Brainstorm the concept
