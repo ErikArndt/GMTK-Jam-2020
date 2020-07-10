@@ -8,10 +8,6 @@ pygame.init()
 WINDOW = pygame.display.set_mode((const.WIN_LENGTH, const.WIN_HEIGHT)) # defines the game window
 pygame.display.set_caption('Game name')
 SURFACE = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT))
-roomArray = [] # to be filled with room objects
-
-def lookUp(index): # not sure if this should be here or in room.py
-    return roomArray[index]
 
 def run_game(window, surface):
     game_clock = pygame.time.Clock()
