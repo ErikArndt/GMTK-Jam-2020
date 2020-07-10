@@ -2,8 +2,8 @@
 I figured if I'm making a class, I might as well make a separate
 file, too.
 """
-import pygame
 import random
+import pygame
 import const
 
 ## Module-specific constants
@@ -11,7 +11,7 @@ NUM_INITIAL_STARS = 10
 MAX_TIME_BETWEEN_STARS = 20
 
 class Star:
-    def __init__(self, x_pos = const.WIN_LENGTH):
+    def __init__(self, x_pos=const.WIN_LENGTH):
         self.x_pos = x_pos
         self.y_pos = random.randint(0, const.WIN_HEIGHT)
 

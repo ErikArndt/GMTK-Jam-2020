@@ -1,20 +1,20 @@
 import random
 
-roomArray = [] # to be filled with room objects
+room_list = [] # to be filled with room objects
 
-def fireTick():
-    for i in roomArray:
-        if i.fireLevel == 0:
+def fire_tick():
+    for i in room_list:
+        if i.fire_level == 0:
             for j in i.adjacent:
-                if lookUp(j).fireLevel == 2:
+                if lookup(j).fire_level == 2:
                     if random.random() <= i.spreadChance:
-                        i.fireLevel = 1
+                        i.fire_level = 1
                         break
-                
-        elif i.fireLevel == 1:
+
+        elif i.fire_level == 1:
             if random.random() <= i.growthChance:
-                i.fireLevel = 2
+                i.fire_level = 2
     return
 
-def lookUp(index):
-    return roomArray[index]
+def lookup(index):
+    return room_list[index]
