@@ -1,6 +1,7 @@
 import pygame
 import const
 import menu
+import background
 
 pygame.init()
 
@@ -10,12 +11,13 @@ SURFACE = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT))
 
 def run_game(window, surface):
     game_clock = pygame.time.Clock()
+    game_bg = background.Background(surface)
     running = True
     game_state = const.MENU
     while running:
         game_clock.tick()
         pygame.time.delay(10) ## apparently this helps with inputs
-        pygame.draw.rect(surface, const.BLACK, (0, 0, const.WIN_LENGTH, const.WIN_HEIGHT))
+        game_bg.draw()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT: # what happens when X is pressed
@@ -26,7 +28,7 @@ def run_game(window, surface):
                         game_state = const.PLAYING
 
         if game_state == const.MENU:
-            menu.draw_text(surface)
+            menu.draw_menu(surface)
 
         window.blit(surface, (0, 0))
         pygame.display.update()
