@@ -1,5 +1,6 @@
 import pygame
 import const
+import util
 
 BUTTON_HEIGHT = 50
 MARGIN = 5 # pixels around text/buttons
@@ -28,8 +29,7 @@ class TextBoxButton:
     def draw(self, surface):
         # Use a lighter colour if mouse is hovering over button
         if self.moused_over:
-            light_colour = (min(255, self.colour[0] + 30), min(255, self.colour[1] + 30), \
-                min(255, self.colour[2] + 30))
+            light_colour = util.lighten(self.colour)
             pygame.draw.rect(surface, light_colour, self.rect)
         else:
             pygame.draw.rect(surface, self.colour, self.rect)
