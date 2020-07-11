@@ -4,6 +4,7 @@ from img import IMAGES
 
 BORDER_SIZE = 10 # pixels around edge of dashboard
 BAR_WIDTH = 25
+BAR_BORDER = 5
 
 # Not sure if I'll need classes for all of these, but it couldn't hurt
 class Radar:
@@ -22,8 +23,12 @@ class ResourceBar:
         self.length = length
         self.max = maximum # maximum value the bar can take (i.e. it's "full" value)
         self.value = maximum
+        self.fill_width = self.length - BAR_BORDER*2
         self.colour = colour
         self.vertical = vertical
+
+    def recalculate_fill_width(self):
+        self.fill_width = round((self.value / self.max)*self.length - BAR_BORDER*2)
 
     def change_value(self, modifier):
         """Add modifier to value of bar (or subtract it if modifier is negative)
@@ -32,6 +37,7 @@ class ResourceBar:
             modifier (integer): amount to change value by.
         """
         self.value += modifier
+        self.recalculate_fill_width()
 
     def set_value(self, value):
         """Set bar's value to the given amount. If amount is greater than max or less
@@ -46,6 +52,7 @@ class ResourceBar:
             self.value = self.max
         else:
             self.value = value
+        self.recalculate_fill_width()
 
     def draw(self, surface):
         if self.vertical:
@@ -53,12 +60,10 @@ class ResourceBar:
             return
         else:
             pygame.draw.rect(surface, (50, 50, 50), (self.x_pos, self.y_pos, self.length, BAR_WIDTH))
-            bar_border = 5
-            fill_ratio = round(self.value / self.max)*self.length - bar_border*2
-            pygame.draw.rect(surface, (0, 0, 0), (self.x_pos + bar_border, self.y_pos + bar_border, \
-                self.length - bar_border*2, BAR_WIDTH - bar_border*2))
-            pygame.draw.rect(surface, self.colour, (self.x_pos + bar_border, self.y_pos + bar_border, \
-                fill_ratio, BAR_WIDTH - bar_border*2))
+            pygame.draw.rect(surface, const.BLACK, (self.x_pos + BAR_BORDER, self.y_pos + BAR_BORDER, \
+                self.length - BAR_BORDER*2, BAR_WIDTH - BAR_BORDER*2))
+            pygame.draw.rect(surface, self.colour, (self.x_pos + BAR_BORDER, self.y_pos + BAR_BORDER, \
+                self.fill_width, BAR_WIDTH - BAR_BORDER*2))
 
 class Dashboard:
     def __init__(self, surface):
@@ -83,11 +88,11 @@ class Dashboard:
         """
         self.hull_bar.change_value(damage*-1)
 
-    def lose_water(self, water_loss=5):
-        """Decreases the Water bar by the amount given, or 5 if none is given.
+    def lose_water(self, water_loss=1):
+        """Decreases the Water bar by the amount given, or 1 if none is given.
 
         Args:
-            water_loss (int, optional): Water spent. Defaults to 5.
+            water_loss (int, optional): Water spent. Defaults to 1.
         """
         self.water_bar.change_value(water_loss*-1)
 

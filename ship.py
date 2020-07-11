@@ -16,22 +16,43 @@ class Ship:
         self.room_list[0].fire_level = 1
 
     def fire_tick(self):
+        """Increases fire levels of rooms on fire, spreads fire to
+        adjacent rooms at random, and returns the number of rooms on fire.
+
+        Returns:
+            int: Number of rooms on fire.
+        """
+        num_onfire = 0
         for i in self.room_list:
             if i.fire_level == 0:
                 for j in i.adjacent:
                     if self.lookup(j).fire_level == 2:
                         if random.random() <= i.spread_chance:
                             i.fire_level = 1
+                            num_onfire += 1
                             break
 
             elif i.fire_level == 1:
                 i.fire_level = 2
+                num_onfire += 1
+            elif i.fire_level == 2:
+                num_onfire += 1
+        return num_onfire
 
     def sprinkler_tick(self):
+        """Reduces fire levels of rooms where sprinklers are on, and returns
+        the number of rooms that have sprinklers turned on.
+
+        Returns:
+            int: Number of rooms with sprinklers activated.
+        """
+        num_sprinkling = 0
         for i in self.room_list:
-            if i.sprinkling and i.fire_level > 0:
-                i.fire_level -= 1
-                # also put code here for depleting water resources once we get that set up
+            if i.sprinkling:
+                num_sprinkling += 1
+                if i.fire_level > 0:
+                    i.fire_level -= 1
+        return num_sprinkling
 
     def lookup(self, index):
         return self.room_list[index]

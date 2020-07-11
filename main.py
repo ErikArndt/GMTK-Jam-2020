@@ -26,6 +26,8 @@ def run_game(window, surface):
 
     f_tick_time = 5 # in seconds
     s_tick_time = 3 # ditto
+    last_f_tick = 0 # declare this up front just in case
+    last_s_tick = 0 # ditto
 
     while running:
         game_clock.tick()
@@ -42,8 +44,6 @@ def run_game(window, surface):
                         last_f_tick = time.time()
                         last_s_tick = time.time()
 
-                    #if game_state == const.PLAYING: # for testing
-                    #    game_ship.fire_tick()
             if event.type == pygame.MOUSEMOTION: # keeps track of mouse coords
                 mouse_x, mouse_y = event.pos
                 for i in game_ship.room_list:
@@ -51,7 +51,7 @@ def run_game(window, surface):
                         i.moused_over = True
                     else:
                         i.moused_over = False
-            
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in game_ship.room_list:
                     if i.moused_over:
@@ -67,14 +67,23 @@ def run_game(window, surface):
         if game_state == const.PLAYING:
             current_time = time.time()
             if current_time - last_f_tick >= f_tick_time:
-                game_ship.fire_tick()
+                num_onfire = game_ship.fire_tick()
+                game_dash.take_damage() # for testing
+                if num_onfire == 0:
+                    game_state = const.FIRE_OUT
                 last_f_tick = current_time
             if current_time - last_s_tick >= s_tick_time:
-                game_ship.sprinkler_tick()
+                num_sprinkling = game_ship.sprinkler_tick()
+                game_dash.lose_water(num_sprinkling)
                 last_s_tick = current_time
 
             game_ship.draw()
-            game_dash.draw()            
+            game_dash.draw()
+
+        if game_state == const.FIRE_OUT:
+            game_ship.draw()
+            game_dash.draw()
+            # Display a text box saying you lost because fire went out
 
         window.blit(surface, (0, 0))
         pygame.display.update()
