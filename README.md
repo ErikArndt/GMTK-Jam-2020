@@ -6,11 +6,13 @@ We're making a game where you pilot a ship through space, hoping to reach a spac
 
 ## TODO:
 (edit as the project progresses)
-* differentiate the rooms
-* add more interesting stuff to the dashboard
-* incorporate Sarah's empty room picture
-* incorporate Sarah's fire pictures (when done)
 * S - make images for dashboard things (resource bars, radar, firing lasers)
 * S - make images for text boxes (will be used for tutorial messages)
-
-I feel like our next big task should be lasers and aliens approaching on the radar
+* win condition
+* aliens approaching on radar and damaging hull
+* different levels
+* asteroids approaching on radar and damaging hull
+* shield system to protect against asteroids
+* events
+* repair system and breaking modules
+* tutorial?
