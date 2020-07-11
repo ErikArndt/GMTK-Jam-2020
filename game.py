@@ -26,6 +26,7 @@ class Game:
         self.last_f_anim = time.time()
         self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
 
+        self.level = 1
         self.level_start_time = time.time()
 
     def begin(self):
@@ -40,6 +41,9 @@ class Game:
         self.s_tick_time = 3 # seconds between sprinkler ticks
         self.last_f_tick = time.time()
         self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
+
+        self.level = 1
+        self.level_start_time = time.time()
 
     def press_key(self, key):
         if key == pygame.K_SPACE: # spacebar
@@ -79,6 +83,13 @@ class Game:
             if self.active_text_box.buttons[0].moused_over and (self.state == const.FIRE_OUT or \
                 self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT):
                 self.begin()
+                return
+            # The first button of the WIN text advances to the next level.
+            if self.active_text_box.buttons[0].moused_over and self.state == const.WIN:
+                self.state = const.PLAYING
+                self.level += 1
+                self.begin()
+                return
 
     def calculate_lightyears(self):
         """Returns how many lightyears the ship must travel to complete the level.
@@ -91,8 +102,8 @@ class Game:
         return round((LEVEL_CLEAR_TIME - elapsed_time)/10)
 
     def tick(self):
-        """Checks if fire and sprinklers need to activate, and whatever other things need
-        to happen each frame.
+        """Checks if fire and sprinklers need to activate, checks if you've won or lost, 
+        and does whatever other things need to happen each frame.
         """
         if self.state == const.PLAYING:
             # Check if you've lost the game
@@ -115,8 +126,17 @@ class Game:
                 game_over_text = 'The hull is breached! The air in your space ship rushes out into ' + \
                     'the vacuum of space, sucking you out with it. Luckily, by some miracle, your ' + \
                     'cactus manages to survive, and lives to tell your tale.'
-                self.active_text_box = TextBox(game_over_text, const.MED, 'GAME_OVER')
+                self.active_text_box = TextBox(game_over_text, const.MED, 'GAME OVER')
                 self.active_text_box.add_button('Back to Title', const.RED)
+
+            # Check if you've won the game
+            if self.calculate_lightyears() <= 0:
+                self.state = const.WIN
+                win_text = 'Your ship manages to reach the spaceport intact! You get a much-needed ' + \
+                    'chance to refill your water, repair your hull, and catch your breath. But you are ' + \
+                    'still a long way from home, so you must keep going!'
+                self.active_text_box = TextBox(win_text, const.MED, 'SPACEPORT REACHED')
+                self.active_text_box.add_button('Continue to level ' + str(self.level + 1), const.GREEN)
 
             # Check sprinklers and fire
             current_time = time.time()
@@ -158,7 +178,8 @@ class Game:
             self.ship.draw()
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.calculate_lightyears())
 
-        if self.state == const.FIRE_OUT or self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT:
+        if self.state == const.FIRE_OUT or self.state == const.HULL_OUT or \
+            self.state == const.BRIDGE_OUT or self.state == const.WIN:
             self.ship.draw()
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.calculate_lightyears())
             self.active_text_box.draw(self.surface) # these states should always have the text box
