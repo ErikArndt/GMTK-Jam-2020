@@ -1,11 +1,12 @@
+import time
 import pygame
 import const
+import img
+import background
 import menu
 import ship
-import background
 import dashboard
-import img
-import time
+import text
 
 pygame.init()
 
@@ -20,6 +21,7 @@ def run_game(window, surface):
     game_bg = background.Background(surface)
     game_dash = dashboard.Dashboard(surface)
     game_ship = ship.Ship(surface)
+    active_text_box = None # can only have one active text box at a time
 
     running = True
     game_state = const.MENU
@@ -51,15 +53,28 @@ def run_game(window, surface):
                         i.moused_over = True
                     else:
                         i.moused_over = False
+                if active_text_box and len(active_text_box.buttons) > 0:
+                    for btn in active_text_box.buttons:
+                        btn.check_mouse_hover(mouse_x, mouse_y)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if game_state == const.MENU:
+                    game_state = const.PLAYING
+
+                # Should these be restricted to certain game states?
                 for i in game_ship.room_list:
                     if i.moused_over:
                         if i.sprinkling:
                             i.sprinkling = False
                         elif not i.sprinkling:
                             i.sprinkling = True
-
+                if active_text_box and len(active_text_box.buttons) > 0:
+                    # Here is where I'll have to figure out how to add functionality
+                    # to the buttons. I might just have to do this on a case-by-case basis.
+                    # I know the first button of the FIRE_OUT text goes to the title screen.
+                    if active_text_box.buttons[0].moused_over and game_state == const.FIRE_OUT:
+                        game_state = const.MENU
+                        active_text_box = None
 
         if game_state == const.MENU:
             menu.draw_menu(surface)
@@ -70,7 +85,15 @@ def run_game(window, surface):
                 num_onfire = game_ship.fire_tick()
                 game_dash.take_damage() # for testing
                 if num_onfire == 0:
+                    # There's probably a better way of detecting that the fire
+                    # is out, but for now this works. It takes a few seconds, but it works.
                     game_state = const.FIRE_OUT
+                    game_over_text = 'The fire went out! Your engines can no longer be powered. ' + \
+                        'You and your cactus are screwed.'
+                    active_text_box = text.TextBox(game_over_text, const.MED, 'GAME OVER')
+                    active_text_box.add_button('Back to Title', const.RED)
+                    # active_text_box.add_button('Play again', (50, 50, 255))
+                    # active_text_box.add_button('Punch Cactus', (0, 255, 0))
                 last_f_tick = current_time
             if current_time - last_s_tick >= s_tick_time:
                 num_sprinkling = game_ship.sprinkler_tick()
@@ -83,7 +106,7 @@ def run_game(window, surface):
         if game_state == const.FIRE_OUT:
             game_ship.draw()
             game_dash.draw()
-            # Display a text box saying you lost because fire went out
+            active_text_box.draw(surface) # this state should always have the text box
 
         window.blit(surface, (0, 0))
         pygame.display.update()
