@@ -35,9 +35,9 @@ class Ship:
             if room.fire_level == 0:
                 for j in room.adjacent:
                     if self.lookup(j).fire_level == 2 and random.random() <= room.spread_chance:
-                            room.fire_level = 1
-                            self.num_onfire += 1
-                            break
+                        room.fire_level = 1
+                        self.num_onfire += 1
+                        break
             elif room.fire_level == 1:
                 room.fire_level = 2
 
