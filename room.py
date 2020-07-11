@@ -28,11 +28,11 @@ class Room:
         #     g += 30
         #     b += 30
         # pygame.draw.rect(surface, (r,g,b), (self.x_pos, self.y_pos, self.size, self.size))
-        if self.moused_over:
-            pygame.draw.rect(img.IMAGES['empty_room'], (0, 0, 255), (0, 0, 500, 500))
         surface.blit(img.IMAGES['empty_room'], (self.x_pos, self.y_pos))
         if self.fire_level == 1:
             surface.blit(img.IMAGES['fire_lvl_1'][self.fire_anim_state], (self.x_pos, self.y_pos))
+        elif self.fire_level == 2:
+            surface.blit(img.IMAGES['fire_lvl_2'][self.fire_anim_state], (self.x_pos, self.y_pos))
 
         if self.sprinkling:
             pygame.draw.rect(surface, (0, 0, 255), (self.x_pos + self.size/2 - 5, \
