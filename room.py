@@ -1,6 +1,7 @@
 import pygame
 import img
 import util
+import const
 class Room:
     def __init__(self, x, y, adjacent, room_type): # x and y are the canvas coordinates, used for drawing
         self.x_pos = x
@@ -33,6 +34,19 @@ class Room:
             util.bevelled_rect(overlay_surface, (r, g, b), (0, 0, self.size, self.size), \
                 15)
             surface.blit(overlay_surface, (self.x_pos, self.y_pos))
+        if self.type != const.EMPTY:
+            if self.type == const.BRIDGE:
+                letter = "B"
+            elif self.type == const.SENSORS:
+                letter = "S"
+            elif self.type == const.RADAR:
+                letter = "R"
+            elif self.type == const.LASER:
+                letter = "L"
+            room_text = const.TITLE_FONT_SM.render(letter, True, const.BLACK)
+            surface.blit(room_text, (self.x_pos + (70 - room_text.get_width())/2, self.y_pos + 23))
+
+
 
         if self.sprinkling:
             pygame.draw.rect(surface, (0, 0, 255), (self.x_pos + self.size/2 - 5, \
