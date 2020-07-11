@@ -1,3 +1,5 @@
+import time
+import math
 import pygame
 import const
 from img import IMAGES
@@ -12,9 +14,24 @@ class Radar:
         self.x_pos = x_pos # center
         self.y_pos = y_pos # center
         self.radius = radius
+        self.animation_length = 2 # seconds it takes for a full rotation
+        self.last_rotation_time = time.time()
+
+    def draw_radar_hand(self, surface):
+        # keep time current
+        if time.time() - self.last_rotation_time > self.animation_length:
+            self.last_rotation_time -= self.animation_length
+        # calculate hand position
+        progress = (time.time() - self.last_rotation_time)*2*math.pi/self.animation_length
+        hand_x = round(math.cos(progress)*self.radius)
+        hand_y = round(math.sin(progress)*self.radius)
+        # draw the line
+        pygame.draw.line(surface, const.WHITE, (self.x_pos, self.y_pos), \
+            (self.x_pos + hand_x, self.y_pos + hand_y))
 
     def draw(self, surface):
         pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
+        self.draw_radar_hand(surface)
 
 class ResourceBar:
     def __init__(self, x_pos, y_pos, length, maximum, colour, vertical=False):
