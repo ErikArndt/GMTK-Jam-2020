@@ -28,16 +28,19 @@ class ResourceBar:
         self.vertical = vertical
 
     def recalculate_fill_width(self):
-        self.fill_width = round((self.value / self.max)*self.length - BAR_BORDER*2)
+        self.fill_width = round((self.value / self.max) * (self.length - BAR_BORDER*2))
 
     def change_value(self, modifier):
-        """Add modifier to value of bar (or subtract it if modifier is negative)
+        """Add modifier to value of bar (or subtract it if modifier is negative). If
+        amount is greater than max or less than zero, bar's value will be bounded.
 
         Args:
             modifier (integer): amount to change value by.
+        Returns:
+            integer: amount that value was set to.
         """
-        self.value += modifier
-        self.recalculate_fill_width()
+        self.set_value(self.value + modifier)
+        return self.value
 
     def set_value(self, value):
         """Set bar's value to the given amount. If amount is greater than max or less
@@ -78,7 +81,7 @@ class Dashboard:
             self.y_pos + round(self.height/2), radar_radius)
 
         self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 100, (255, 0, 0))
-        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 100, (50, 50, 255))
+        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 10, (50, 50, 255))
 
     def take_damage(self, damage=5):
         """Decreases the Hull bar by the amount given, or 5 if none is given.
@@ -95,6 +98,16 @@ class Dashboard:
             water_loss (int, optional): Water spent. Defaults to 1.
         """
         self.water_bar.change_value(water_loss*-1)
+
+    def get_health(self):
+        """Getter that returns the health of the hull.
+        """
+        return self.hull_bar.value
+
+    def get_water(self):
+        """Getter that returns the water left in the tank.
+        """
+        return self.water_bar.value
 
     def draw(self):
         pygame.draw.rect(self.surface, (150, 50, 0), (self.x_pos, self.y_pos, \

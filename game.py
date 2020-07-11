@@ -6,6 +6,7 @@ from dashboard import Dashboard
 from ship import Ship
 from text import TextBox
 
+SPRINKLER_LIMIT = 4
 
 class Game:
     def __init__(self, surface):
@@ -62,8 +63,10 @@ class Game:
             if room.moused_over:
                 if room.sprinkling:
                     room.sprinkling = False
-                elif not room.sprinkling:
+                    self.ship.num_sprinkling -= 1
+                elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
                     room.sprinkling = True
+                    self.ship.num_sprinkling += 1
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
             # to the buttons. I might just have to do this on a case-by-case basis.
@@ -72,28 +75,36 @@ class Game:
                 self.begin()
 
     def tick(self):
-        """Checks if fire and sprinklers need to activate. Should be called each frame.
+        """Checks if fire and sprinklers need to activate, and whatever other things need
+        to happen each frame.
         """
         if self.state == const.PLAYING:
+            # Check if you've lost the game
+            if self.ship.num_onfire == 0:
+                self.state = const.FIRE_OUT
+                game_over_text = 'The fire went out! You\'re relieved for a moment, but then ' + \
+                    'you feel your ship begin to stall. Your engines can no longer be powered. ' + \
+                    'You and your cactus are screwed.'
+                self.active_text_box = TextBox(game_over_text, const.MED, 'GAME OVER')
+                self.active_text_box.add_button('Back to Title', const.RED)
+                # self.active_text_box.add_button('Play again', (50, 50, 255))
+                # self.active_text_box.add_button('Punch Cactus', (0, 255, 0))
+
+            # Check sprinklers and fire
             current_time = time.time()
             if current_time - self.last_f_tick >= self.f_tick_time:
-                num_onfire = self.ship.fire_tick()
+                self.ship.fire_tick()
                 self.dashboard.take_damage() # for testing
-                if num_onfire == 0:
-                    # There's probably a better way of detecting that the fire
-                    # is out, but for now this works. It takes a few seconds, but it works.
-                    self.state = const.FIRE_OUT
-                    game_over_text = 'The fire went out! Your engines can no longer be powered. ' + \
-                        'You and your cactus are screwed.'
-                    self.active_text_box = TextBox(game_over_text, const.MED, 'GAME OVER')
-                    self.active_text_box.add_button('Back to Title', const.RED)
-                    # self.active_text_box.add_button('Play again', (50, 50, 255))
-                    # self.active_text_box.add_button('Punch Cactus', (0, 255, 0))
                 self.last_f_tick = current_time
             if current_time - self.last_s_tick >= self.s_tick_time:
-                num_sprinkling = self.ship.sprinkler_tick()
-                self.dashboard.lose_water(num_sprinkling)
-                self.last_s_tick = current_time
+                if self.ship.num_sprinkling <= self.dashboard.get_water():
+                    self.ship.sprinkler_tick()
+                    self.dashboard.lose_water(self.ship.num_sprinkling)
+                    self.last_s_tick = current_time
+                else:
+                    self.ship.sprinkler_tick(self.dashboard.get_water())
+                    self.dashboard.lose_water(self.dashboard.get_water())
+                    self.last_s_tick = current_time
 
     def draw(self):
         if self.state == const.MENU:
