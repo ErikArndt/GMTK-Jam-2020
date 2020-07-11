@@ -10,5 +10,7 @@ We're making a game where you pilot a ship through space, hoping to reach a spac
 * add more interesting stuff to the dashboard
 * incorporate Sarah's empty room picture
 * incorporate Sarah's fire pictures (when done)
-* make images for dashboard things (resource bars, radar, firing lasers)
-* make images for text boxes (will be used for tutorial messages)
+* S - make images for dashboard things (resource bars, radar, firing lasers)
+* S - make images for text boxes (will be used for tutorial messages)
+
+I feel like our next big task should be lasers and aliens approaching on the radar
