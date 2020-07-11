@@ -2,11 +2,13 @@
 This is our submission for the 2020 Gamemaker's Toolkit Game Jam.
 
 ## The Project
-We threw out some ideas a few weeks ago, but nothing concrete. I don't remember most of that conversation, but I know I (Erik) would like to try making our own version of the Child of Light combat system.
-It really depends on the theme, too.
-
-hi im caleb
+We're making a game where you pilot a ship through space, hoping to reach a space station on the opposite end of the galaxy. The twist: Your ship is on fire! And it must stay on fire throughout the entire journey!
 
 ## TODO:
 (edit as the project progresses)
-* Brainstorm the concept
+* differentiate the rooms
+* add more interesting stuff to the dashboard
+* incorporate Sarah's empty room picture
+* incorporate Sarah's fire pictures (when done)
+* make images for dashboard things (resource bars, radar, firing lasers)
+* make images for text boxes (will be used for tutorial messages)
