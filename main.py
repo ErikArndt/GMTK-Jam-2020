@@ -26,10 +26,12 @@ def run_game(window, surface):
     running = True
     game_state = const.MENU
 
-    f_tick_time = 5 # in seconds
-    s_tick_time = 3 # ditto
-    last_f_tick = 0 # declare this up front just in case
-    last_s_tick = 0 # ditto
+    f_tick_time = 5   # in seconds
+    s_tick_time = 3   # ditto
+    f_anim_time = 0.4 # double ditto
+    last_f_tick = 0   # declare this up front just in case
+    last_s_tick = 0   # ditto
+    last_f_anim = 0   # double dog ditto
 
     while running:
         game_clock.tick()
@@ -96,6 +98,13 @@ def run_game(window, surface):
                     # active_text_box.add_button('Play again', (50, 50, 255))
                     # active_text_box.add_button('Punch Cactus', (0, 255, 0))
                 last_f_tick = current_time
+            if current_time - last_f_anim >= f_anim_time:
+                for i in game_ship.room_list:
+                    if i.fire_anim_state >= 2:
+                        i.fire_anim_state = 0
+                    else:
+                        i.fire_anim_state += 1
+                    last_f_anim = current_time
             if current_time - last_s_tick >= s_tick_time:
                 num_sprinkling = game_ship.sprinkler_tick()
                 game_dash.lose_water(num_sprinkling)

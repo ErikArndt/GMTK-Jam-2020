@@ -17,3 +17,13 @@ def init_images():
 
     # Rooms
     IMAGES['empty_room'] = pygame.image.load('room_template.png').convert_alpha()
+    IMAGES['empty_room'] = pygame.transform.scale(IMAGES['empty_room'], (70, 70))
+
+    # Fire
+    IMAGES['fire_lvl_1'] = []
+    IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_1.png').convert_alpha())
+    IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_2.png').convert_alpha())
+    IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_1.png').convert_alpha())
+
+    for i in range(len(IMAGES['fire_lvl_1'])):
+        IMAGES['fire_lvl_1'][i] = pygame.transform.scale(IMAGES['fire_lvl_1'][i], (70, 70))
