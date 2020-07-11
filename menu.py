@@ -3,6 +3,7 @@ import const
 
 pygame.font.init()
 
+# should these be in const?
 DEFAULT_FONT = pygame.font.Font('nasalization-rg.ttf', 24)
 SCIFI_FONT = pygame.font.Font('ethnocentric-rg.ttf', 24)
 TITLE_FONT = pygame.font.Font('ethnocentric-rg.ttf', 60)

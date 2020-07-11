@@ -2,6 +2,8 @@ import pygame
 import const
 import menu
 import background
+import dashboard
+import img
 
 pygame.init()
 
@@ -9,9 +11,13 @@ WINDOW = pygame.display.set_mode((const.WIN_LENGTH, const.WIN_HEIGHT)) # defines
 pygame.display.set_caption('Game name')
 SURFACE = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT))
 
+img.init_images() # must be done after setting display mode
+
 def run_game(window, surface):
     game_clock = pygame.time.Clock()
     game_bg = background.Background(surface)
+    game_dash = dashboard.Dashboard(surface)
+
     running = True
     game_state = const.MENU
     while running:
@@ -29,6 +35,8 @@ def run_game(window, surface):
 
         if game_state == const.MENU:
             menu.draw_menu(surface)
+        if game_state == const.PLAYING:
+            game_dash.draw()
 
         window.blit(surface, (0, 0))
         pygame.display.update()
