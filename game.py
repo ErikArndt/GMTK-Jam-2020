@@ -92,6 +92,10 @@ class Game:
                 # self.active_text_box.add_button('Play again', (50, 50, 255))
                 # self.active_text_box.add_button('Punch Cactus', (0, 255, 0))
 
+            # Update which systems are disabled
+            self.ship.check_systems()
+            self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
+
             # Check sprinklers and fire
             current_time = time.time()
             if current_time - self.last_f_tick >= self.f_tick_time:

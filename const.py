@@ -13,8 +13,10 @@ HULL_OUT = 3
 ## ******* ROOM TYPES *******
 EMPTY = 0
 BRIDGE = 1
-RADAR = 2
-LASER = 3
+SENSORS = 2
+RADAR = 3
+LASER = 4
+
 
 ## ******* COLOURS ***********
 BLACK = (0, 0, 0) # could also use pygame.Color('white'), but idk the difference

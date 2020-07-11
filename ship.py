@@ -11,7 +11,7 @@ class Ship:
             Room(100, 210, [2, 3], const.EMPTY),
             Room(200, 120, [0, 3, 4, 5], const.EMPTY),
             Room(200, 210, [1, 2, 5, 6], const.EMPTY),
-            Room(300, 75, [2, 5, 7], const.EMPTY),
+            Room(300, 75, [2, 5, 7], const.SENSORS),
             Room(300, 165, [2, 3, 4, 6, 8, 9], const.EMPTY),
             Room(300, 255, [3, 5, 10], const.EMPTY),
             Room(400, 30, [4, 8], const.EMPTY),
@@ -23,9 +23,12 @@ class Ship:
             Room(600, 165, [11, 12], const.BRIDGE)
         ]
         self.room_list[3].fire_level = 1
+        self.room_list[4].fire_level = 1
 
         self.num_onfire = 1
         self.num_sprinkling = 0
+
+        self.disabled_systems = [False, False, False, False, False]
 
     def fire_tick(self):
         """Increases fire levels of rooms on fire, spreads fire to
@@ -57,6 +60,14 @@ class Ship:
 
     def lookup(self, index):
         return self.room_list[index]
+
+    def check_systems(self):
+        for i in self.room_list:
+            if i.type != const.EMPTY:
+                if i.fire_level == 2:
+                    self.disabled_systems[i.type] = True
+                else:
+                    self.disabled_systems[i.type] = False
 
     def draw(self):
         # Draw connections before drawing rooms
