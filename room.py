@@ -3,10 +3,12 @@ class Room:
     def __init__(self, x, y, adjacent): # x and y are the canvas coordinates, used for drawing
         self.x_pos = x
         self.y_pos = y
+        self.width = 50
+        self.height = 50
         self.adjacent = adjacent # this is an array of integers
 
         self.fire_level = 0
-        self.spread_chance = 0.2 # chance that an adjacent level 2 fire spreads to this room
+        self.spread_chance = 0.5 # chance that an adjacent level 2 fire spreads to this room
 
         self.sprinkling = False
 
@@ -18,3 +20,6 @@ class Room:
         else:
             colour = (255, 0, 0)
         pygame.draw.rect(surface, colour, (self.x_pos, self.y_pos, 50, 50))
+
+        if self.sprinkling:
+            pygame.draw.rect(surface, (0, 0, 255), (self.x_pos+20, self.y_pos-5, 10, 10))

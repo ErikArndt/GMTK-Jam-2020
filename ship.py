@@ -27,6 +27,12 @@ class Ship:
             elif i.fire_level == 1:
                 i.fire_level = 2
 
+    def sprinkler_tick(self):
+        for i in self.room_list:
+            if i.sprinkling and i.fire_level > 0:
+                i.fire_level -= 1
+                # also put code here for depleting water resources once we get that set up
+
     def lookup(self, index):
         return self.room_list[index]
 
