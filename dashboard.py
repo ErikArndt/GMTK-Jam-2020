@@ -151,13 +151,33 @@ class Dashboard:
         """
         return self.sensors.water_bar.value
 
-    def draw(self):
+    def draw(self, sprinklers, lightyears):
+        # Many values here are magic numbers. This layout will be pretty messed up if
+        # we change WIN_LENGTH or WIN_HEIGHT
         pygame.draw.rect(self.surface, (150, 50, 0), (self.x_pos, self.y_pos, \
             self.width, self.height))
+        radar_text = const.DEFAULT_FONT_SM.render('Radar', True, const.BLACK)
+        self.surface.blit(radar_text, (self.x_pos + 600, self.y_pos + BORDER_SIZE))
         self.radar.draw(self.surface)
-
         self.sensors.draw(self.surface)
 
         cactus = pygame.transform.scale(IMAGES['cactus'], (55, 80))
         self.surface.blit(cactus, (BORDER_SIZE, \
             const.WIN_HEIGHT - BORDER_SIZE - cactus.get_height()))
+
+        # available sprinklers
+        sprinkler_text = const.DEFAULT_FONT_SM.render('Sprinklers Available', True, const.BLACK)
+        self.surface.blit(sprinkler_text, (self.x_pos + 300, self.y_pos + BORDER_SIZE))
+        for i in range(sprinklers):
+            self.surface.blit(IMAGES['sprinkler'], (self.x_pos + 300 + i*50, \
+                self.y_pos + BORDER_SIZE + sprinkler_text.get_height()))
+
+        # lightyears to destination
+        number_text = const.DIGITAL_FONT.render(str(lightyears), True, const.YELLOW)
+        pygame.draw.rect(self.surface, const.BLACK, (self.x_pos + 80, self.y_pos + 110, \
+            number_text.get_width() + 20, number_text.get_height() + 10))
+        self.surface.blit(number_text, (self.x_pos + 90, self.y_pos + 120))
+        lightyear_text = const.DEFAULT_FONT_SM.render('Lightyears to', True, const.BLACK)
+        spaceport_text = const.DEFAULT_FONT_SM.render('Next Spaceport', True, const.BLACK)
+        self.surface.blit(lightyear_text, (self.x_pos + 130, self.y_pos + 120))
+        self.surface.blit(spaceport_text, (self.x_pos + 130, self.y_pos + 120 + lightyear_text.get_height()))

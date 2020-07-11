@@ -32,6 +32,9 @@ def init_images():
 
     for i in range(len(IMAGES['fire_lvl_1'])):
         IMAGES['fire_lvl_1'][i] = pygame.transform.scale(IMAGES['fire_lvl_1'][i], (70, 70))
-    
+
     for i in range(len(IMAGES['fire_lvl_2'])):
         IMAGES['fire_lvl_2'][i] = pygame.transform.scale(IMAGES['fire_lvl_2'][i], (70, 70))
+
+    # Sprinkler (Don't actually use this one, it's not technically ours)
+    IMAGES['sprinkler'] = pygame.image.load('stardew_sprinkler.png').convert_alpha()

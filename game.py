@@ -7,6 +7,7 @@ from ship import Ship
 from text import TextBox
 
 SPRINKLER_LIMIT = 4
+LEVEL_CLEAR_TIME = 90 # seconds to survive
 
 class Game:
     def __init__(self, surface):
@@ -24,6 +25,8 @@ class Game:
         self.last_f_tick = time.time()
         self.last_f_anim = time.time()
         self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
+
+        self.level_start_time = time.time()
 
     def begin(self):
         """Resets game state and begins a new game.
@@ -77,6 +80,16 @@ class Game:
                 self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT):
                 self.begin()
 
+    def calculate_lightyears(self):
+        """Returns how many lightyears the ship must travel to complete the level.
+        I haven't playtested this, but how about 10 seconds for 1 lightyear?
+
+        Returns:
+            int: lightyears remaining.
+        """
+        elapsed_time = time.time() - self.level_start_time
+        return round((LEVEL_CLEAR_TIME - elapsed_time)/10)
+
     def tick(self):
         """Checks if fire and sprinklers need to activate, and whatever other things need
         to happen each frame.
@@ -115,7 +128,7 @@ class Game:
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
-                
+
             if current_time - self.last_f_anim >= self.f_anim_time:
                 for i in self.ship.room_list:
                     if i.fire_anim_state >= 2:
@@ -132,7 +145,7 @@ class Game:
                     self.ship.sprinkler_tick(self.dashboard.get_water())
                     self.dashboard.lose_water(self.dashboard.get_water())
                     self.last_s_tick = current_time
-                
+
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2] 
@@ -143,9 +156,9 @@ class Game:
 
         elif self.state == const.PLAYING:
             self.ship.draw()
-            self.dashboard.draw()
+            self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.calculate_lightyears())
 
         if self.state == const.FIRE_OUT or self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT:
             self.ship.draw()
-            self.dashboard.draw()
+            self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.calculate_lightyears())
             self.active_text_box.draw(self.surface) # these states should always have the text box
