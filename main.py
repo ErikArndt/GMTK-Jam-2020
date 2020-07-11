@@ -49,7 +49,8 @@ def run_game(window, surface):
             if event.type == pygame.MOUSEMOTION: # keeps track of mouse coords
                 mouse_x, mouse_y = event.pos
                 for i in game_ship.room_list:
-                    if mouse_x > i.x_pos and mouse_x < i.x_pos + i.width and mouse_y > i.y_pos and mouse_y < i.y_pos + i.height:
+                    if mouse_x > i.x_pos and mouse_x < i.x_pos + i.size and \
+                        mouse_y > i.y_pos and mouse_y < i.y_pos + i.size:
                         i.moused_over = True
                     else:
                         i.moused_over = False

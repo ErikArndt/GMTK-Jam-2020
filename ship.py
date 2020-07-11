@@ -10,7 +10,7 @@ class Ship:
             room.Room(150, 50, [0, 4]),
             room.Room(250, 50, [5]),
             room.Room(50, 150, [0, 4]),
-            room.Room(150, 150, [1, 3]),
+            room.Room(150, 250, [1, 3]),
             room.Room(250, 150, [2]),
         ]
         self.room_list[0].fire_level = 1
@@ -61,8 +61,9 @@ class Ship:
         # Draw connections before drawing rooms
         for rm in self.room_list:
             for adj in rm.adjacent:
-                end_pos = (self.lookup(adj).x_pos + 25, self.lookup(adj).y_pos + 25)
+                adj_room = self.lookup(adj)
+                end_pos = (adj_room.x_pos + adj_room.size/2, adj_room.y_pos + adj_room.size/2)
                 pygame.draw.line(self.surface, (255, 255, 255), \
-                    (rm.x_pos + 25, rm.y_pos + 25), end_pos, 4)
+                    (rm.x_pos + rm.size/2, rm.y_pos + rm.size/2), end_pos, 4)
         for rm in self.room_list:
             rm.draw(self.surface)
