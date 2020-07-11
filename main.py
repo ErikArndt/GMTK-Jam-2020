@@ -18,6 +18,7 @@ def run_game(window, surface):
     game_clock = pygame.time.Clock()
     game_bg = background.Background(surface)
     game_dash = dashboard.Dashboard(surface)
+    game_ship = ship.Ship(surface)
 
     running = True
     game_state = const.MENU
@@ -35,18 +36,13 @@ def run_game(window, surface):
                         game_state = const.PLAYING
 
                     if game_state == const.PLAYING: # for testing
-                        ship.fireTick()
+                        game_ship.fire_tick()
 
         if game_state == const.MENU:
             menu.draw_menu(surface)
         if game_state == const.PLAYING:
+            game_ship.draw()
             game_dash.draw()
-
-        if game_state == const.PLAYING:
-            for i in ship.roomArray:
-                i.draw_room(surface)
-                
-                
 
         window.blit(surface, (0, 0))
         pygame.display.update()

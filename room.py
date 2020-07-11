@@ -1,5 +1,4 @@
 import pygame
-import ship
 class Room:
     def __init__(self, x, y, adjacent): # x and y are the canvas coordinates, used for drawing
         self.x_pos = x
@@ -11,7 +10,7 @@ class Room:
 
         self.sprinkling = False
 
-    def draw_room(self, surface): # will be replaced once we have room visuals
+    def draw(self, surface): # will be updated once we have room visuals
         if self.fire_level == 0:
             colour = (0, 255, 0)
         elif self.fire_level == 1:
@@ -19,7 +18,3 @@ class Room:
         else:
             colour = (255, 0, 0)
         pygame.draw.rect(surface, colour, (self.x_pos, self.y_pos, 50, 50))
-        for i in self.adjacent:
-            end_pos = (ship.lookup(i).x + 25, ship.lookup(i).y + 25)
-            pygame.draw.line(surface, (255, 255, 255), (self.x_pos + 25, self.y_pos + 25), end_pos, 4)
-
