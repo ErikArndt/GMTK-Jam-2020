@@ -81,7 +81,7 @@ class Dashboard:
             self.y_pos + round(self.height/2), radar_radius)
 
         self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 100, (255, 0, 0))
-        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 10, (50, 50, 255))
+        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
 
     def take_damage(self, damage=5):
         """Decreases the Hull bar by the amount given, or 5 if none is given.

@@ -22,7 +22,7 @@ class Ship:
             Room(500, 210, [9, 13], const.EMPTY),
             Room(600, 165, [11, 12], const.BRIDGE)
         ]
-        self.room_list[0].fire_level = 1
+        self.room_list[3].fire_level = 1
 
         self.num_onfire = 1
         self.num_sprinkling = 0
