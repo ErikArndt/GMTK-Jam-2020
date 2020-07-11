@@ -6,12 +6,20 @@ class Ship:
     def __init__(self, surface):
         self.surface = surface
         self.room_list = [
-            room.Room(50, 50, [1, 3]),
-            room.Room(150, 50, [0, 4]),
-            room.Room(250, 50, [5]),
-            room.Room(50, 150, [0, 4]),
-            room.Room(150, 250, [1, 3]),
-            room.Room(250, 150, [2]),
+            room.Room(100, 120, [2, 3]),
+            room.Room(100, 210, [2, 3]),
+            room.Room(200, 120, [0, 3, 4, 5]),
+            room.Room(200, 210, [1, 2, 5, 6]),
+            room.Room(300, 75, [2, 5, 7]),
+            room.Room(300, 165, [2, 3, 4, 6, 8, 9]),
+            room.Room(300, 255, [3, 5, 10]),
+            room.Room(400, 30, [4, 8]),
+            room.Room(400, 120, [5, 7, 9, 11]),
+            room.Room(400, 210, [5, 8, 10, 12]),
+            room.Room(400, 300, [6, 9]),
+            room.Room(500, 120, [8, 13]),
+            room.Room(500, 210, [9, 13]),
+            room.Room(600, 165, [11, 12]),
         ]
         self.room_list[0].fire_level = 1
 
