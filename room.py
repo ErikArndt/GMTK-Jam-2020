@@ -1,6 +1,6 @@
 import pygame
 class Room:
-    def __init__(self, x, y, adjacent): # x and y are the canvas coordinates, used for drawing
+    def __init__(self, x, y, adjacent, room_type): # x and y are the canvas coordinates, used for drawing
         self.x_pos = x
         self.y_pos = y
         self.size = 70
@@ -11,6 +11,8 @@ class Room:
 
         self.moused_over = False
         self.sprinkling = False
+
+        self.type = room_type
 
     def draw(self, surface): # will be updated once we have room visuals
         if self.fire_level == 0:

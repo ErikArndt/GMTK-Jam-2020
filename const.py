@@ -10,6 +10,12 @@ PLAYING = 1
 FIRE_OUT = 2
 HULL_OUT = 3
 
+## ******* ROOM TYPES *******
+EMPTY = 0
+BRIDGE = 1
+RADAR = 2
+LASER = 3
+
 ## ******* COLOURS ***********
 BLACK = (0, 0, 0) # could also use pygame.Color('white'), but idk the difference
 WHITE = (255, 255, 255)
