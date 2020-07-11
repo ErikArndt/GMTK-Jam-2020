@@ -101,7 +101,7 @@ class Game:
                 self.state = const.HULL_OUT
                 game_over_text = 'The hull is breached! The air in your space ship rushes out into ' + \
                     'the vacuum of space, sucking you out with it. Luckily, by some miracle, your ' + \
-                    'cactus manages to survive, and lives to tell your tale.' + \
+                    'cactus manages to survive, and lives to tell your tale.'
                 self.active_text_box = TextBox(game_over_text, const.MED, 'GAME_OVER')
                 self.active_text_box.add_button('Back to Title', const.RED)
 
