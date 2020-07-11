@@ -32,6 +32,11 @@ class Radar:
 
     def draw(self, surface):
         pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
+        pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), self.radius, 2)
+        pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(2*self.radius/3), 2)
+        pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(self.radius/3), 2)
+        pygame.draw.line(surface, (50, 100, 50), (self.x_pos - self.radius, self.y_pos), (self.x_pos + self.radius, self.y_pos), 2)
+        pygame.draw.line(surface, (50, 100, 50), (self.x_pos, self.y_pos - self.radius), (self.x_pos, self.y_pos + self.radius), 2)
         self.draw_radar_hand(surface)
 
 class ResourceBar:
