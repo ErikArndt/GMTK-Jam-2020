@@ -1,5 +1,6 @@
 import pygame
 import img
+import util
 class Room:
     def __init__(self, x, y, adjacent, room_type): # x and y are the canvas coordinates, used for drawing
         self.x_pos = x
@@ -17,22 +18,21 @@ class Room:
         self.type = room_type
 
     def draw(self, surface):
-        # if self.fire_level == 0:
-        #     r,g,b = (0, 225, 0)
-        # elif self.fire_level == 1:
-        #     r,g,b = (225, 150, 0)
-        # else:
-        #     r,g,b = (225, 0, 0)
-        # if self.moused_over:
-        #     r += 30
-        #     g += 30
-        #     b += 30
-        # pygame.draw.rect(surface, (r,g,b), (self.x_pos, self.y_pos, self.size, self.size))
         surface.blit(img.IMAGES['empty_room'], (self.x_pos, self.y_pos))
-        if self.fire_level == 1:
-            surface.blit(img.IMAGES['fire_lvl_1'][self.fire_anim_state], (self.x_pos, self.y_pos))
-        elif self.fire_level == 2:
-            surface.blit(img.IMAGES['fire_lvl_2'][self.fire_anim_state], (self.x_pos, self.y_pos))
+        if self.fire_level > 0:
+            if self.fire_level == 1:
+                surface.blit(img.IMAGES['fire_lvl_1'][self.fire_anim_state], (self.x_pos, self.y_pos))
+                r,g,b = (225, 150, 0)
+            elif self.fire_level == 2:
+                surface.blit(img.IMAGES['fire_lvl_2'][self.fire_anim_state], (self.x_pos, self.y_pos))
+                r,g,b = (225, 0, 0)
+            if self.moused_over:
+                r,g,b = util.lighten((r, g, b))
+            overlay_surface = pygame.Surface((self.size, self.size), pygame.HWSURFACE)
+            overlay_surface.set_alpha(50) # the surface is now semi-transparent
+            util.bevelled_rect(overlay_surface, (r, g, b), (0, 0, self.size, self.size), \
+                15)
+            surface.blit(overlay_surface, (self.x_pos, self.y_pos))
 
         if self.sprinkling:
             pygame.draw.rect(surface, (0, 0, 255), (self.x_pos + self.size/2 - 5, \
