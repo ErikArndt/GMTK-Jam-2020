@@ -5,6 +5,7 @@ import ship
 import background
 import dashboard
 import img
+import time
 
 pygame.init()
 
@@ -22,6 +23,10 @@ def run_game(window, surface):
 
     running = True
     game_state = const.MENU
+
+    f_tick_time = 5 # in seconds
+    s_tick_time = 3 # ditto
+
     while running:
         game_clock.tick()
         pygame.time.delay(10) ## apparently this helps with inputs
@@ -34,15 +39,42 @@ def run_game(window, surface):
                 if event.key == pygame.K_SPACE: # spacebar
                     if game_state == const.MENU:
                         game_state = const.PLAYING
+                        last_f_tick = time.time()
+                        last_s_tick = time.time()
 
-                    if game_state == const.PLAYING: # for testing
-                        game_ship.fire_tick()
+                    #if game_state == const.PLAYING: # for testing
+                    #    game_ship.fire_tick()
+            if event.type == pygame.MOUSEMOTION: # keeps track of mouse coords
+                mouse_x, mouse_y = event.pos
+                for i in game_ship.room_list:
+                    if mouse_x > i.x_pos and mouse_x < i.x_pos + i.width and mouse_y > i.y_pos and mouse_y < i.y_pos + i.height:
+                        i.moused_over = True
+                    else:
+                        i.moused_over = False
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in game_ship.room_list:
+                    if i.moused_over:
+                        if i.sprinkling:
+                            i.sprinkling = False
+                        elif not i.sprinkling:
+                            i.sprinkling = True
+
 
         if game_state == const.MENU:
             menu.draw_menu(surface)
+
         if game_state == const.PLAYING:
+            current_time = time.time()
+            if current_time - last_f_tick >= f_tick_time:
+                game_ship.fire_tick()
+                last_f_tick = current_time
+            if current_time - last_s_tick >= s_tick_time:
+                game_ship.sprinkler_tick()
+                last_s_tick = current_time
+
             game_ship.draw()
-            game_dash.draw()
+            game_dash.draw()            
 
         window.blit(surface, (0, 0))
         pygame.display.update()
