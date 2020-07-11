@@ -111,6 +111,11 @@ class Game:
                 self.ship.fire_tick()
                 self.dashboard.take_damage() # for testing
                 self.last_f_tick = current_time
+
+                # Update which systems are disabled
+                self.ship.check_systems()
+                self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
+                
             if current_time - self.last_f_anim >= self.f_anim_time:
                 for i in self.ship.room_list:
                     if i.fire_anim_state >= 2:
@@ -127,6 +132,10 @@ class Game:
                     self.ship.sprinkler_tick(self.dashboard.get_water())
                     self.dashboard.lose_water(self.dashboard.get_water())
                     self.last_s_tick = current_time
+                
+                # Update which systems are disabled
+                self.ship.check_systems()
+                self.dashboard.sensors.disabled = self.ship.disabled_systems[2] 
 
     def draw(self):
         if self.state == const.MENU:

@@ -16,6 +16,7 @@ class Radar:
         self.radius = radius
         self.animation_length = 2 # seconds it takes for a full rotation
         self.last_rotation_time = time.time()
+        self.disabled = False
 
     def draw_radar_hand(self, surface):
         # keep time current
@@ -43,6 +44,7 @@ class ResourceBar:
         self.fill_width = self.length - BAR_BORDER*2
         self.colour = colour
         self.vertical = vertical
+        self.disabled = False
 
     def recalculate_fill_width(self):
         self.fill_width = round((self.value / self.max) * (self.length - BAR_BORDER*2))
@@ -85,6 +87,30 @@ class ResourceBar:
             pygame.draw.rect(surface, self.colour, (self.x_pos + BAR_BORDER, self.y_pos + BAR_BORDER, \
                 self.fill_width, BAR_WIDTH - BAR_BORDER*2))
 
+class Sensors:
+    def __init__(self, x_pos, y_pos):
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.disabled = False
+
+        self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 100, (255, 0, 0))
+        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
+
+    def draw(self, surface):
+        hull_text = const.TITLE_FONT_SM.render("HULL", True, const.BLACK)
+        surface.blit(hull_text, (self.x_pos + 120 - hull_text.get_width(), self.y_pos + 5))
+
+        water_text = const.TITLE_FONT_SM.render("WATER", True, const.BLACK)
+        surface.blit(water_text, (self.x_pos + 120 - water_text.get_width(), self.y_pos + 15 + BAR_WIDTH))
+
+        if not self.disabled:
+            self.hull_bar.draw(surface)
+            self.water_bar.draw(surface)
+        else:
+            pygame.draw.rect(surface, (50, 50, 50), (self.x_pos + 130, self.y_pos + 10, 150, 10 + 2*BAR_WIDTH))
+            fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
+            surface.blit(fire_text, (self.x_pos + 130 + (150 - fire_text.get_width())/2, self.y_pos + 25))
+
 class Dashboard:
     def __init__(self, surface):
         self.surface = surface
@@ -97,8 +123,7 @@ class Dashboard:
         self.radar = Radar(self.x_pos + self.width - radar_radius - 10, \
             self.y_pos + round(self.height/2), radar_radius)
 
-        self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 100, (255, 0, 0))
-        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
+        self.sensors = Sensors(self.x_pos, self.y_pos)
 
     def take_damage(self, damage=5):
         """Decreases the Hull bar by the amount given, or 5 if none is given.
@@ -106,7 +131,7 @@ class Dashboard:
         Args:
             damage (int, optional): Damage dealt. Defaults to 5.
         """
-        self.hull_bar.change_value(damage*-1)
+        self.sensors.hull_bar.change_value(damage*-1)
 
     def lose_water(self, water_loss=1):
         """Decreases the Water bar by the amount given, or 1 if none is given.
@@ -114,30 +139,24 @@ class Dashboard:
         Args:
             water_loss (int, optional): Water spent. Defaults to 1.
         """
-        self.water_bar.change_value(water_loss*-1)
+        self.sensors.water_bar.change_value(water_loss*-1)
 
     def get_health(self):
         """Getter that returns the health of the hull.
         """
-        return self.hull_bar.value
+        return self.sensors.hull_bar.value
 
     def get_water(self):
         """Getter that returns the water left in the tank.
         """
-        return self.water_bar.value
+        return self.sensors.water_bar.value
 
     def draw(self):
         pygame.draw.rect(self.surface, (150, 50, 0), (self.x_pos, self.y_pos, \
             self.width, self.height))
         self.radar.draw(self.surface)
 
-        hull_text = const.TITLE_FONT_SM.render("HULL", True, const.BLACK)
-        self.surface.blit(hull_text, (self.x_pos + 120 - hull_text.get_width(), self.y_pos + 5))
-        self.hull_bar.draw(self.surface)
-
-        water_text = const.TITLE_FONT_SM.render("WATER", True, const.BLACK)
-        self.surface.blit(water_text, (self.x_pos + 120 - water_text.get_width(), self.y_pos + 15 + BAR_WIDTH))
-        self.water_bar.draw(self.surface)
+        self.sensors.draw(self.surface)
 
         cactus = pygame.transform.scale(IMAGES['cactus'], (55, 80))
         self.surface.blit(cactus, (BORDER_SIZE, \
