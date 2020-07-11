@@ -1,6 +1,7 @@
 import pygame
 import const
 import menu
+import ship
 import background
 import dashboard
 import img
@@ -33,10 +34,19 @@ def run_game(window, surface):
                     if game_state == const.MENU:
                         game_state = const.PLAYING
 
+                    if game_state == const.PLAYING: # for testing
+                        ship.fireTick()
+
         if game_state == const.MENU:
             menu.draw_menu(surface)
         if game_state == const.PLAYING:
             game_dash.draw()
+
+        if game_state == const.PLAYING:
+            for i in ship.roomArray:
+                i.draw_room(surface)
+                
+                
 
         window.blit(surface, (0, 0))
         pygame.display.update()
