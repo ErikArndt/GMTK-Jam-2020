@@ -9,6 +9,7 @@ MENU = 0
 PLAYING = 1
 FIRE_OUT = 2
 HULL_OUT = 3
+BRIDGE_OUT = 4
 
 ## ******* ROOM TYPES *******
 EMPTY = 0

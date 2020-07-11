@@ -72,8 +72,9 @@ class Game:
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
             # to the buttons. I might just have to do this on a case-by-case basis.
-            # I know the first button of the FIRE_OUT text goes to the title screen.
-            if self.active_text_box.buttons[0].moused_over and self.state == const.FIRE_OUT:
+            # I know the first button of the GAME OVER text goes to the title screen.
+            if self.active_text_box.buttons[0].moused_over and (self.state == const.FIRE_OUT or \
+                self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT):
                 self.begin()
 
     def tick(self):
@@ -89,8 +90,20 @@ class Game:
                     'You and your cactus are screwed.'
                 self.active_text_box = TextBox(game_over_text, const.MED, 'GAME OVER')
                 self.active_text_box.add_button('Back to Title', const.RED)
-                # self.active_text_box.add_button('Play again', (50, 50, 255))
-                # self.active_text_box.add_button('Punch Cactus', (0, 255, 0))
+            elif self.ship.is_bridge_burning():
+                self.state = const.BRIDGE_OUT
+                game_over_text = 'The bridge has burned up, and you along with it! You were ' + \
+                    'unable to control the flames, and they consumed you. Not even your brave ' + \
+                    'cactus survived.'
+                self.active_text_box = TextBox(game_over_text, const.MED, 'GAME OVER')
+                self.active_text_box.add_button('Back to Title', const.RED)
+            elif self.dashboard.get_health() <= 0:
+                self.state = const.HULL_OUT
+                game_over_text = 'The hull is breached! The air in your space ship rushes out into ' + \
+                    'the vacuum of space, sucking you out with it. Luckily, by some miracle, your ' + \
+                    'cactus manages to survive, and lives to tell your tale.'
+                self.active_text_box = TextBox(game_over_text, const.MED, 'GAME_OVER')
+                self.active_text_box.add_button('Back to Title', const.RED)
 
             # Check sprinklers and fire
             current_time = time.time()
@@ -132,7 +145,7 @@ class Game:
             self.ship.draw()
             self.dashboard.draw()
 
-        if self.state == const.FIRE_OUT:
+        if self.state == const.FIRE_OUT or self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT:
             self.ship.draw()
             self.dashboard.draw()
-            self.active_text_box.draw(self.surface) # this state should always have the text box
+            self.active_text_box.draw(self.surface) # these states should always have the text box

@@ -61,6 +61,25 @@ class Ship:
     def lookup(self, index):
         return self.room_list[index]
 
+    def is_bridge_burning(self):
+        """Predicate that indicates whether the bridge is at fire level 2. I
+        could instead check if that room is disabled, but, like, I already wrote
+        this code, so whatever.
+
+        Returns:
+            boolean: True if bridge is at fire level 2, false otherwise.
+        """
+        # Bridge should be the last room in the list
+        last_room = self.room_list[-1]
+        if last_room.type == const.BRIDGE:
+            return last_room.fire_level == 2
+        # iterate through just in case it's not last in the list
+        else:
+            for room in self.room_list:
+                if room.type == const.BRIDGE:
+                    return room.fire_level == 2
+        return False # if this is reached, then the ship doesn't have a bridge
+
     def check_systems(self):
         for i in self.room_list:
             if i.type != const.EMPTY:
