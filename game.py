@@ -172,7 +172,7 @@ class Game:
                     self.state = const.REPAIRING
                 elif self.state == const.REPAIRING:
                     self.state = const.PLAYING
-        
+
         if self.state == const.INSTALLING:
             for room_id in range(len(self.ship.room_list)):
                 if self.ship.room_list[room_id].moused_over and self.ship.room_list[room_id].type == const.EMPTY:
@@ -182,7 +182,10 @@ class Game:
                     elif self.level == 3:
                         self.ship.room_list[room_id].type = const.REPAIR
                     self.state = const.PLAYING
+                    SOUNDS['press'].play()
                     self.unpause()
+                elif self.ship.room_list[room_id].moused_over:
+                    SOUNDS['invalid'].play()
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
