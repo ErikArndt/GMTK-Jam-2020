@@ -15,6 +15,7 @@ EVENT = 6
 WIN_GAME = 7
 TUTORIAL = 8
 REPAIRING = 9
+INSTALLING = 10
 
 ## ******* ROOM TYPES *******
 EMPTY = 0
