@@ -21,10 +21,14 @@ class Game:
 
         self.f_tick_time = 5   # seconds between fire ticks
         self.f_anim_time = 0.4 # seconds between fire animation frames
-        self.s_tick_time = 3   # seconds between sprinkler ticks
         self.last_f_tick = time.time()
         self.last_f_anim = time.time()
+
+        self.s_tick_time = 3   # seconds between sprinkler ticks
         self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
+
+        self.r_tick_time = 2   # seconds between radar ticks
+        self.last_r_tick = time.time() - 1.5 # offset so they don't happen simultaneously
 
         self.level = 1
         self.level_start_time = time.time()
@@ -35,21 +39,7 @@ class Game:
     def begin(self):
         """Resets game state and begins a new game.
         """
-        self.state = const.MENU
-        self.dashboard = Dashboard(self.surface)
-        self.ship = Ship(self.surface)
-        self.active_text_box = None # can only have one at a time
-
-        self.f_tick_time = 5 # seconds between fire ticks
-        self.s_tick_time = 3 # seconds between sprinkler ticks
-        self.last_f_tick = time.time()
-        self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
-
-        self.level = 1
-        self.level_start_time = time.time()
-
-        self.is_paused = False
-        self.time_paused = None
+        self.__init__(self.surface)
 
     def press_key(self, key):
         if key == pygame.K_SPACE: # spacebar
@@ -164,17 +154,14 @@ class Game:
                 self.active_text_box = TextBox(win_text, const.MED, 'SPACEPORT REACHED')
                 self.active_text_box.add_button('Continue to level ' + str(self.level + 1), const.GREEN)
 
-            # Check sprinklers and fire
+            # Check sprinklers, fire, and radar
             current_time = time.time()
             if current_time - self.last_f_tick >= self.f_tick_time:
                 self.ship.fire_tick()
-                self.dashboard.take_damage() # for testing
                 self.last_f_tick = current_time
-
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
-
             if current_time - self.last_f_anim >= self.f_anim_time:
                 for i in self.ship.room_list:
                     if i.fire_anim_state >= 2:
@@ -182,6 +169,7 @@ class Game:
                     else:
                         i.fire_anim_state += 1
                     self.last_f_anim = current_time
+
             if current_time - self.last_s_tick >= self.s_tick_time:
                 if self.ship.num_sprinkling <= self.dashboard.get_water():
                     self.ship.sprinkler_tick()
@@ -191,10 +179,15 @@ class Game:
                     self.ship.sprinkler_tick(self.dashboard.get_water())
                     self.dashboard.lose_water(self.dashboard.get_water())
                     self.last_s_tick = current_time
-
                 # Update which systems are disabled
                 self.ship.check_systems()
-                self.dashboard.sensors.disabled = self.ship.disabled_systems[2] 
+                self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
+
+            if current_time - self.last_r_tick >= self.r_tick_time:
+                shields_up = False # replace with actual method call
+                damage_taken = self.dashboard.radar.radar_tick(shields_up)
+                self.dashboard.take_damage(damage_taken)
+                self.last_r_tick = current_time
 
     def draw(self):
         if self.state == const.MENU:

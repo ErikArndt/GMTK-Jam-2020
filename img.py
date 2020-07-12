@@ -28,7 +28,7 @@ def init_images():
     IMAGES['fire_lvl_2'] = []
     IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 1.png').convert_alpha())
     IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 2.png').convert_alpha())
-    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 3.png').convert_alpha()) # will change these once we get the lvl 2 fire images
+    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 3.png').convert_alpha())
 
     for i in range(len(IMAGES['fire_lvl_1'])):
         IMAGES['fire_lvl_1'][i] = pygame.transform.scale(IMAGES['fire_lvl_1'][i], (70, 70))
@@ -38,3 +38,9 @@ def init_images():
 
     # Sprinkler (Don't actually use this one, it's not technically ours)
     IMAGES['sprinkler'] = pygame.image.load('stardew_sprinkler.png').convert_alpha()
+
+    # Radar objects
+    alien_ship_img = pygame.image.load('ship.png').convert_alpha()
+    IMAGES['alien_ship'] = pygame.transform.scale(alien_ship_img, (20, 20))
+    asteroid_img = pygame.image.load('asteroid.png').convert_alpha()
+    IMAGES['asteroid'] = pygame.transform.scale(asteroid_img, (30, 30))

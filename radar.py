@@ -6,21 +6,20 @@ import time
 import math
 import pygame
 import const
+from img import IMAGES
 
 class Alien:
-    def __init__(self, direction, is_waiting):
+    def __init__(self, direction):
         self.direction = direction
-        self.is_waiting = is_waiting
-        self.distance = 3 # rings away from center
+        self.distance = 4 # rings away from center
 
     def move(self):
-        if not self.is_waiting:
-            self.distance -= 1
+        self.distance -= 1
 
 class Asteroid:
     def __init__(self, direction):
         self.direction = direction
-        self.distance = 3 # rings away from center
+        self.distance = 4 # rings away from center
 
     def move(self):
         self.distance -= 1
@@ -32,15 +31,43 @@ class Radar:
         self.radius = radius
         self.animation_length = 2 # seconds it takes for a full rotation
         self.last_rotation_time = time.time()
-        self.aliens = []
+        self.alien_queue_N = []
+        self.alien_queue_S = []
         self.asteroids = []
         self.disabled = False
 
+        self.add_alien(const.NORTH) # for testing
+
+    def add_alien(self, direction):
+        if direction == const.NORTH:
+            self.alien_queue_N.append(Alien(direction))
+        elif direction == const.SOUTH:
+            self.alien_queue_S.append(Alien(direction))
+
+    def add_asteroid(self, direction):
+        self.asteroids.append(Asteroid(direction))
+
     def radar_tick(self, shields_up):
+        """Moves aliens and asteroids closer to the center of the radar, and
+        returns the hull damage taken from alien gunfire and asteroid collisions.
+
+        Args:
+            shields_up (boolean): indicates whether the ship's shields are active or not.
+
+        Returns:
+            int: amount of damage taken.
+        """
         damage_taken = 0
-        for alien in self.aliens:
-            if alien.distance > 1:
-                alien.move()
+        if len(self.alien_queue_N) > 0:
+            north_alien = self.alien_queue_N[0]
+            if north_alien.distance > 1:
+                north_alien.move()
+            else:
+                damage_taken += 1
+        if len(self.alien_queue_S) > 0:
+            south_alien = self.alien_queue_S[0]
+            if south_alien.distance > 1:
+                south_alien.move()
             else:
                 damage_taken += 1
         for asteroid in self.asteroids:
@@ -51,6 +78,7 @@ class Radar:
             else:
                 damage_taken += 1
                 self.asteroids.remove(asteroid)
+        return damage_taken
 
     def draw_radar_hand(self, surface):
         # keep time current
@@ -64,6 +92,13 @@ class Radar:
         pygame.draw.line(surface, const.WHITE, (self.x_pos, self.y_pos), \
             (self.x_pos + hand_x, self.y_pos + hand_y))
 
+    def draw_aliens(self, surface):
+        if len(self.alien_queue_N) > 0 and self.alien_queue_N[0].distance < 4:
+            alien_dist = self.alien_queue_N[0].distance
+            print(alien_dist)
+            alien_img = pygame.transform.flip(IMAGES['alien_ship'], False, True)
+            surface.blit(alien_img, (self.x_pos - 10, self.y_pos - alien_dist*20))
+
     def draw(self, surface):
         pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
         pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), self.radius, 2)
@@ -71,4 +106,5 @@ class Radar:
         pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(self.radius/3), 2)
         pygame.draw.line(surface, (50, 100, 50), (self.x_pos - self.radius, self.y_pos), (self.x_pos + self.radius, self.y_pos), 2)
         pygame.draw.line(surface, (50, 100, 50), (self.x_pos, self.y_pos - self.radius), (self.x_pos, self.y_pos + self.radius), 2)
+        self.draw_aliens(surface)
         self.draw_radar_hand(surface)

@@ -66,7 +66,7 @@ class Sensors:
         self.y_pos = y_pos
         self.disabled = False
 
-        self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 100, (255, 0, 0))
+        self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 10, (255, 0, 0))
         self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
 
     def draw(self, surface):
@@ -98,11 +98,11 @@ class Dashboard:
 
         self.sensors = Sensors(self.x_pos, self.y_pos)
 
-    def take_damage(self, damage=5):
-        """Decreases the Hull bar by the amount given, or 5 if none is given.
+    def take_damage(self, damage=1):
+        """Decreases the Hull bar by the amount given, or 1 if none is given.
 
         Args:
-            damage (int, optional): Damage dealt. Defaults to 5.
+            damage (int, optional): Damage dealt. Defaults to 1.
         """
         self.sensors.hull_bar.change_value(damage*-1)
 
