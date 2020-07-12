@@ -18,6 +18,8 @@ def init_images():
     # Rooms
     IMAGES['empty_room'] = pygame.image.load('images/room_template.png').convert_alpha()
     IMAGES['empty_room'] = pygame.transform.scale(IMAGES['empty_room'], (70, 70))
+    bridge_img = pygame.image.load('images/bridge.png').convert_alpha()
+    IMAGES['bridge_room'] = pygame.transform.scale(bridge_img, (70, 70))
 
     # Fire
     IMAGES['fire_lvl_1'] = []
@@ -44,3 +46,16 @@ def init_images():
     IMAGES['alien_ship'] = pygame.transform.scale(alien_ship_img, (20, 20))
     asteroid_img = pygame.image.load('images/asteroid.png').convert_alpha()
     IMAGES['asteroid'] = pygame.transform.scale(asteroid_img, (30, 30))
+
+    # Room Symbols
+    sensor_symbol = pygame.image.load('images/sensor transparent.png').convert_alpha()
+    IMAGES['sensor_symbol'] = pygame.transform.scale(sensor_symbol, (40, 40))
+    radar_symbol = pygame.image.load('images/radar transparent.png').convert_alpha()
+    IMAGES['radar_symbol'] = pygame.transform.scale(radar_symbol, (40, 40))
+    laser_symbol = pygame.image.load('images/laser transparent.png').convert_alpha()
+    IMAGES['laser_symbol'] = pygame.transform.scale(laser_symbol, (40, 40))
+    IMAGES['laser_symbol_180'] = pygame.transform.rotate(IMAGES['laser_symbol'], 180)
+    shield_symbol = pygame.image.load('images/shield tansparent.png').convert_alpha()
+    IMAGES['shield_symbol'] = pygame.transform.scale(shield_symbol, (40, 40))
+    repair_symbol = pygame.image.load('images/repair transparent.png').convert_alpha()
+    IMAGES['repair_symbol'] = pygame.transform.scale(repair_symbol, (40, 40))
