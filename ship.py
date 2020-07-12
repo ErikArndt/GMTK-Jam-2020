@@ -24,7 +24,7 @@ class Ship:
         ]
         self.room_list[starting_fire].fire_level = 1
 
-        self.num_onfire = 2
+        self.num_onfire = 1
         self.num_sprinkling = 0
 
         # empty, bridge, sensors, radar, laser (port / starboard)
