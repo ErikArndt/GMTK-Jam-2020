@@ -60,6 +60,12 @@ class Room:
             util.bevelled_rect(overlay_surface, (0, 255, 0), (0, 0, self.size, self.size), \
                 15)
             surface.blit(overlay_surface, (self.x_pos, self.y_pos))
+        if self.is_breaking:
+            overlay_surface = pygame.Surface((self.size, self.size), pygame.HWSURFACE)
+            overlay_surface.set_alpha(57) # the surface is now semi-transparent
+            util.bevelled_rect(overlay_surface, (0, 0, 0), (0, 0, self.size, self.size), \
+                15)
+            surface.blit(overlay_surface, (self.x_pos, self.y_pos))
 
         if self.sprinkling:
             pygame.draw.rect(surface, (0, 0, 255), (self.x_pos + self.size/2 - 5, \

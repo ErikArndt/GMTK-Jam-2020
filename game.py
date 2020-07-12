@@ -14,7 +14,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 3
+        self.level = 1
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -130,7 +130,6 @@ class Game:
                     self.state = const.REPAIRING
                 elif self.state == const.REPAIRING:
                     self.state = const.PLAYING
-                print('hello there')
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
