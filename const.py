@@ -11,6 +11,7 @@ FIRE_OUT = 2
 HULL_OUT = 3
 BRIDGE_OUT = 4
 WIN = 5
+EVENT = 6
 
 ## ******* ROOM TYPES *******
 EMPTY = 0

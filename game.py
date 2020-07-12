@@ -1,4 +1,5 @@
 import time
+import random
 import pygame
 import const
 from menu import draw_menu
@@ -25,6 +26,10 @@ class Game:
 
         self.s_tick_time = 3   # seconds between sprinkler ticks
         self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
+        self.event_room = None
+        self.event_target_flvl = 0
+        self.event_time = 20
+        self.event_start_time = 0
 
         self.r_tick_time = 2   # seconds between radar ticks
         self.last_r_tick = time.time() - 1.5 # offset so they don't happen simultaneously
@@ -64,6 +69,8 @@ class Game:
         if key == pygame.K_SPACE: # spacebar
             if self.state == const.MENU:
                 self.state = const.PLAYING
+            if self.state == const.PLAYING:
+                self.start_event()
 
     def move_mouse(self, mouse_x, mouse_y):
         for room in self.ship.room_list:
@@ -103,6 +110,10 @@ class Game:
             if self.active_text_box.buttons[0].moused_over and self.state == const.WIN:
                 self.level_up()
                 return
+            if self.active_text_box.buttons[0].moused_over and self.state == const.EVENT:
+                self.unpause()
+                self.state = const.PLAYING
+                self.active_text_box = None
 
     def pause(self):
         self.is_paused = True
@@ -115,6 +126,35 @@ class Game:
         self.last_f_tick += time_missed
         self.last_f_anim += time_missed
         self.last_s_tick += time_missed
+
+    def start_event(self):
+        if self.level == 1:
+            num_systems = 4
+        elif self.level == 2:
+            num_systems = 5
+        event_room_id = random.randint(2, num_systems)
+        print(event_room_id)
+        for i in self.ship.room_list:
+            if i.type == event_room_id:
+                self.event_room = i
+                self.event_room.is_event = True
+                print(self.event_room.type)
+        if self.event_room.fire_level <= 1:
+            self.event_target_flvl = 2
+        elif self.event_room.fire_level == 2:
+            self.event_target_flvl = 0
+        self.event_start_time = time.time()
+        self.state = const.EVENT
+        self.pause()
+        if self.event_target_flvl == 0:
+            event_text = 'The fire in one of your ship\'s rooms is starting to wear down the hull. If you don\'t extinguish it soon,' + \
+                'the ship will take damage. (The room in question is tinted green)'
+        else:
+            event_text = 'A certain species of space termites has infested one of the rooms on your ship! ' + \
+                'You can exterminate them by setting the room on fire, but if you take too long they\'ll damage your hull. ' + \
+                '(The infested room is tinted green)'
+        self.active_text_box = TextBox(event_text, const.MED, 'EVENT')
+        self.active_text_box.add_button('Resume', const.GREEN)
 
     def tick(self):
         """Checks if fire and sprinklers need to activate, checks if you've won or lost,
@@ -182,7 +222,7 @@ class Game:
                     # make a module break and require repairs
                     print('repair should have happened')
 
-            # Check sprinklers, fire, and radar
+            # Check fire
             if current_time - self.last_f_tick >= self.f_tick_time:
                 self.ship.fire_tick()
                 self.last_f_tick = current_time
@@ -197,6 +237,7 @@ class Game:
                         i.fire_anim_state += 1
                     self.last_f_anim = current_time
 
+            # Check sprinklers
             if current_time - self.last_s_tick >= self.s_tick_time:
                 if self.ship.num_sprinkling <= self.dashboard.get_water():
                     self.ship.sprinkler_tick()
@@ -210,11 +251,20 @@ class Game:
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
 
+            # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
                 shields_up = self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
                 self.last_r_tick = current_time
+
+            # Check events
+            if self.event_room != None and current_time - self.event_start_time >= self.event_time:
+                if self.event_target_flvl == 0 and self.event_room.fire_level == 2 or \
+                    self.event_target_flvl == 2 and self.event_room.fire_level <= 1:
+                    self.dashboard.take_damage()
+                self.event_room.is_event = False
+                self.event_room = None
 
     def draw(self):
         if self.state == const.MENU:
@@ -225,7 +275,7 @@ class Game:
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
 
         if self.state == const.FIRE_OUT or self.state == const.HULL_OUT or \
-            self.state == const.BRIDGE_OUT or self.state == const.WIN:
+            self.state == const.BRIDGE_OUT or self.state == const.WIN or self.state == const.EVENT:
             self.ship.draw()
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
             self.active_text_box.draw(self.surface) # these states should always have the text box
