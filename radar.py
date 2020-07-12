@@ -36,9 +36,6 @@ class Radar:
         self.asteroids = []
         self.disabled = False
 
-        self.add_alien(const.SOUTH) # for testing
-        self.add_asteroid(const.SOUTHWEST) # for testing
-
     def add_alien(self, direction):
         if direction == const.NORTH:
             self.alien_queue_N.append(Alien(direction))
