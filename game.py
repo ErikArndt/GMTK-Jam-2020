@@ -144,12 +144,10 @@ class Game:
         elif self.level == 2:
             num_systems = 5
         event_room_id = random.randint(2, num_systems)
-        print(event_room_id)
         for i in self.ship.room_list:
             if i.type == event_room_id:
                 self.event_room = i
                 self.event_room.is_event = True
-                print(self.event_room.type)
         if self.event_room.fire_level <= 1:
             self.event_target_flvl = 2
         elif self.event_room.fire_level == 2:
