@@ -15,6 +15,8 @@ class Room:
 
         self.moused_over = False
         self.is_event = False
+        self.is_breaking = False # for repair events
+        self.is_broken = False
         self.sprinkling = False
 
         self.type = room_type
@@ -48,6 +50,8 @@ class Room:
                 letter = "L"
             elif self.type == const.SHIELD:
                 letter = "SH"
+            elif self.type == const.REPAIR:
+                letter = "RE"
             room_text = const.TITLE_FONT_SM.render(letter, True, const.BLACK)
             surface.blit(room_text, (self.x_pos + (70 - room_text.get_width())/2, self.y_pos + 23))
         if self.is_event:

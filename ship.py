@@ -13,7 +13,7 @@ class Ship:
             Room(200, 210, [1, 2, 5, 6], const.EMPTY),
             Room(300, 75, [2, 5, 7], const.SENSORS),
             Room(300, 165, [2, 3, 4, 6, 8, 9], const.EMPTY),
-            Room(300, 255, [3, 5, 10], const.EMPTY),
+            Room(300, 255, [3, 5, 10], const.REPAIR),
             Room(400, 30, [4, 8], const.LASER_PORT),
             Room(400, 120, [5, 7, 9, 11], const.EMPTY),
             Room(400, 210, [5, 8, 10, 12], const.EMPTY),
@@ -29,7 +29,7 @@ class Ship:
 
         # empty, bridge, sensors, radar, laser (port / starboard)
         # see const.py
-        self.disabled_systems = [False]*7
+        self.disabled_systems = [False]*8
 
     def fire_tick(self):
         """Increases fire levels of rooms on fire, spreads fire to
@@ -84,7 +84,7 @@ class Ship:
     def check_systems(self):
         for i in self.room_list:
             if i.type != const.EMPTY:
-                if i.fire_level == 2:
+                if i.fire_level == 2 or i.is_broken:
                     self.disabled_systems[i.type] = True
                 else:
                     self.disabled_systems[i.type] = False

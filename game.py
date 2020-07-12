@@ -14,7 +14,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 1
+        self.level = 3
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -30,6 +30,10 @@ class Game:
         self.event_target_flvl = 0
         self.event_time = 20
         self.event_start_time = 0
+
+        self.repair_room = None
+        self.repair_time = 5
+        self.repair_start_time = 0
 
         self.r_tick_time = 2   # seconds between radar ticks
         self.last_r_tick = time.time() - 1.5 # offset so they don't happen simultaneously
@@ -89,6 +93,7 @@ class Game:
         # dashboard buttons must be checked individually
         self.dashboard.laser_button_n.check_mouse_hover(mouse_x, mouse_y)
         self.dashboard.laser_button_s.check_mouse_hover(mouse_x, mouse_y)
+        self.dashboard.repair_switch.check_mouse_hover(mouse_x, mouse_y)
 
     def click_mouse(self):
         # This function currently does not need mouse_x or mouse_y, but
@@ -97,15 +102,21 @@ class Game:
             self.state = const.PLAYING
             return
 
-        if self.state == const.PLAYING:
+        if self.state == const.PLAYING or self.state == const.REPAIRING:
             for room in self.ship.room_list:
                 if room.moused_over:
-                    if room.sprinkling:
-                        room.sprinkling = False
-                        self.ship.num_sprinkling -= 1
-                    elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
-                        room.sprinkling = True
-                        self.ship.num_sprinkling += 1
+                    if self.state == const.PLAYING:
+                        if room.sprinkling:
+                            room.sprinkling = False
+                            self.ship.num_sprinkling -= 1
+                        elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
+                            room.sprinkling = True
+                            self.ship.num_sprinkling += 1
+                    elif self.state == const.REPAIRING:
+                        if room.is_breaking:
+                            self.repair_room.is_breaking = False
+                            self.repair_room = None
+
             # dashboard buttons must be checked individually
             if self.dashboard.laser_button_n.moused_over and \
                 not self.ship.is_disabled(const.LASER_PORT):
@@ -113,6 +124,13 @@ class Game:
             if self.dashboard.laser_button_s.moused_over and \
                 not self.ship.is_disabled(const.LASER_STBD):
                 self.dashboard.radar.fire_laser(const.SOUTH)
+            if self.dashboard.repair_switch.moused_over and \
+                not self.ship.is_disabled(const.REPAIR):
+                if self.state == const.PLAYING:
+                    self.state = const.REPAIRING
+                elif self.state == const.REPAIRING:
+                    self.state = const.PLAYING
+                print('hello there')
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
@@ -150,6 +168,7 @@ class Game:
         self.last_s_tick += time_missed
         self.last_r_tick += time_missed
         self.event_start_time += time_missed
+        self.repair_start_time += time_missed
 
     def start_event(self):
         if self.level == 1:
@@ -157,7 +176,7 @@ class Game:
         elif self.level == 2:
             num_systems = 5
         elif self.level == 3:
-            num_systems = 5
+            num_systems = 6
         event_room_id = random.randint(2, num_systems)
         for i in self.ship.room_list:
             if i.type == event_room_id:
@@ -178,6 +197,20 @@ class Game:
                 'You can exterminate them by setting the room on fire, but if you take too long they\'ll damage your hull. '
         self.active_text_box = TextBox(event_text, const.MED, 'EVENT')
         self.active_text_box.add_button('Resume', const.GREEN)
+
+    def start_repair(self, room_id):
+        for i in self.ship.room_list:
+            if i.type == room_id:
+                self.repair_room = i
+                self.repair_room.is_breaking = True
+        self.repair_start_time = time.time()
+        self.state = const.EVENT
+        self.pause()
+        repair_text = 'The ' + const.room_names[room_id] + ' system is breaking! If it isn\'t fixed soon,' + \
+            'it will become permanently disabled. (To repair it, click on the repair button and then ' + \
+            'on the room you want to repair)'
+        self.active_text_box = TextBox(repair_text, const.MED, 'EVENT')
+        self.active_text_box.add_button("Resume", const.GREEN)
 
     def tick(self):
         """Checks if fire and sprinklers need to activate, checks if you've won or lost,
@@ -236,7 +269,6 @@ class Game:
                 self.last_lightyear_tick = time.time()
                 level_str = LEVEL_DATA[self.level][str(self.lightyears_left)]
                 if 'event' in level_str:
-                    ## do event thing here
                     self.start_event()
                 if 'ship_n' in level_str:
                     self.dashboard.radar.add_alien(const.NORTH)
@@ -251,8 +283,14 @@ class Game:
                 if 'ast_se' in level_str:
                     self.dashboard.radar.add_asteroid(const.SOUTHEAST)
                 if 'repair' in level_str:
+                    if 'repair_sn' in level_str:
+                        room_id = const.SENSORS
+                    elif 'repair_rd' in level_str:
+                        room_id = const.RADAR
+                    elif 'repair_sh' in level_str:
+                        room_id = const.SHIELD
                     # make a module break and require repairs
-                    print('repair should have happened')
+                    self.start_repair(room_id)
 
             # Check fire
             if current_time - self.last_f_tick >= self.f_tick_time:
@@ -311,6 +349,12 @@ class Game:
                     self.dashboard.take_damage(3)
                 self.event_room.is_event = False
                 self.event_room = None
+            
+            # Check repair events
+            if self.repair_room is not None and current_time - self.repair_start_time >= self.repair_time:
+                self.repair_room.is_broken = True
+                self.repair_room.is_breaking = False
+                self.repair_room = None
 
     def draw(self):
         if self.state == const.MENU:
