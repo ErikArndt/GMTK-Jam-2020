@@ -29,6 +29,9 @@ class Game:
         self.level = 1
         self.level_start_time = time.time()
 
+        self.is_paused = False
+        self.time_paused = None
+
     def begin(self):
         """Resets game state and begins a new game.
         """
@@ -44,6 +47,9 @@ class Game:
 
         self.level = 1
         self.level_start_time = time.time()
+
+        self.is_paused = False
+        self.time_paused = None
 
     def press_key(self, key):
         if key == pygame.K_SPACE: # spacebar
@@ -91,6 +97,18 @@ class Game:
                 self.begin()
                 return
 
+    def pause(self):
+        self.is_paused = True
+        self.time_paused = time.time()
+
+    def unpause(self):
+        self.is_paused = False
+        time_missed = time.time() - self.time_paused
+        self.level_start_time += time_missed
+        self.f_tick_time += time_missed
+        self.f_anim_time += time_missed
+        self.s_tick_time += time_missed
+
     def calculate_lightyears(self):
         """Returns how many lightyears the ship must travel to complete the level.
         I haven't playtested this, but how about 10 seconds for 1 lightyear?
@@ -99,16 +117,21 @@ class Game:
             int: lightyears remaining.
         """
         elapsed_time = time.time() - self.level_start_time
-        return round((LEVEL_CLEAR_TIME - elapsed_time)/10)
+        if self.is_paused:
+            time_missed = time.time() - self.time_paused
+            return round((LEVEL_CLEAR_TIME - elapsed_time + time_missed)/10)
+        else:
+            return round((LEVEL_CLEAR_TIME - elapsed_time)/10)
 
     def tick(self):
-        """Checks if fire and sprinklers need to activate, checks if you've won or lost, 
+        """Checks if fire and sprinklers need to activate, checks if you've won or lost,
         and does whatever other things need to happen each frame.
         """
         if self.state == const.PLAYING:
             # Check if you've lost the game
             if self.ship.num_onfire == 0:
                 self.state = const.FIRE_OUT
+                self.pause()
                 game_over_text = 'The fire went out! You\'re relieved for a moment, but then ' + \
                     'you feel your ship begin to stall. Your engines can no longer be powered. ' + \
                     'You and your cactus are screwed.'
@@ -116,6 +139,7 @@ class Game:
                 self.active_text_box.add_button('Back to Title', const.RED)
             elif self.ship.is_bridge_burning():
                 self.state = const.BRIDGE_OUT
+                self.pause()
                 game_over_text = 'The bridge has burned up, and you along with it! You were ' + \
                     'unable to control the flames, and they consumed you. Not even your brave ' + \
                     'cactus survived.'
@@ -123,6 +147,7 @@ class Game:
                 self.active_text_box.add_button('Back to Title', const.RED)
             elif self.dashboard.get_health() <= 0:
                 self.state = const.HULL_OUT
+                self.pause()
                 game_over_text = 'The hull is breached! The air in your space ship rushes out into ' + \
                     'the vacuum of space, sucking you out with it. Luckily, by some miracle, your ' + \
                     'cactus manages to survive, and lives to tell your tale.'
@@ -132,6 +157,7 @@ class Game:
             # Check if you've won the game
             if self.calculate_lightyears() <= 0:
                 self.state = const.WIN
+                self.pause()
                 win_text = 'Your ship manages to reach the spaceport intact! You get a much-needed ' + \
                     'chance to refill your water, repair your hull, and catch your breath. But you are ' + \
                     'still a long way from home, so you must keep going!'
