@@ -8,7 +8,7 @@ class Ship:
         self.surface = surface
         self.room_list = [
             Room(100, 120, [2, 3], const.EMPTY),
-            Room(100, 210, [2, 3], const.EMPTY),
+            Room(100, 210, [2, 3], const.RADAR),
             Room(200, 120, [0, 3, 4, 5], const.EMPTY),
             Room(200, 210, [1, 2, 5, 6], const.EMPTY),
             Room(300, 75, [2, 5, 7], const.SENSORS),

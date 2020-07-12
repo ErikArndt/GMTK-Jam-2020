@@ -26,9 +26,9 @@ def init_images():
     IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_3.png').convert_alpha())
 
     IMAGES['fire_lvl_2'] = []
-    IMAGES['fire_lvl_2'].append(pygame.image.load('lvl_1_frame_1.png').convert_alpha())
-    IMAGES['fire_lvl_2'].append(pygame.image.load('lvl_1_frame_1.png').convert_alpha())
-    IMAGES['fire_lvl_2'].append(pygame.image.load('lvl_1_frame_1.png').convert_alpha()) # will change these once we get the lvl 2 fire images
+    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 1.png').convert_alpha())
+    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 2.png').convert_alpha())
+    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 3.png').convert_alpha()) # will change these once we get the lvl 2 fire images
 
     for i in range(len(IMAGES['fire_lvl_1'])):
         IMAGES['fire_lvl_1'][i] = pygame.transform.scale(IMAGES['fire_lvl_1'][i], (70, 70))
