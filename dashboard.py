@@ -116,6 +116,7 @@ class Dashboard:
         self.laser_n_disabled = False
         self.laser_s_disabled = False
         self.repair_disabled = False
+        self.cactus_button = DashButton((BORDER_SIZE, const.WIN_HEIGHT - BORDER_SIZE - 80, 55, 80))
 
     def take_damage(self, damage=1):
         """Decreases the Hull bar by the amount given, or 1 if none is given.

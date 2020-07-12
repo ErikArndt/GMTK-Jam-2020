@@ -8,6 +8,7 @@ from dashboard import Dashboard
 from ship import Ship
 from text import TextBox
 from levels import LEVEL_DATA
+import tutorial
 
 SPRINKLER_LIMIT = 3
 
@@ -48,10 +49,24 @@ class Game:
         self.is_paused = False
         self.time_paused = None
 
+        self.tut_progress = 0
+
     def begin(self):
         """Resets game state and begins a new game.
         """
         self.__init__(self.surface)
+
+    def begin_level(self):
+        if self.level == 1:
+            self.state = const.TUTORIAL
+            self.active_text_box = tutorial.get_text(self.tut_progress)
+            self.pause()
+        elif self.level == 2:
+            self.state = const.PLAYING
+            self.ship.room_list[0].type = const.SHIELD # replace with room-picker
+        elif self.level == 3:
+            self.state = const.PLAYING
+            self.ship.room_list[6].type = const.REPAIR # replace with room-picker
 
     def level_up(self):
         self.level += 1
@@ -66,16 +81,15 @@ class Game:
         self.lightyears_left = 9
         self.last_lightyear_tick = time.time()
 
-        if self.level >= 2:
-            self.ship.room_list[0].type = const.SHIELD # replace with room-picker
-
         self.is_paused = False
         self.time_paused = None
+
+        self.begin_level()
 
     def press_key(self, key):
         if key == pygame.K_SPACE: # spacebar
             if self.state == const.MENU:
-                self.state = const.PLAYING
+                self.begin_level()
         if key == pygame.K_UP:
             if self.state == const.PLAYING and not self.ship.is_disabled(const.LASER_PORT):
                 self.dashboard.radar.fire_laser(const.NORTH)
@@ -96,13 +110,14 @@ class Game:
         # dashboard buttons must be checked individually
         self.dashboard.laser_button_n.check_mouse_hover(mouse_x, mouse_y)
         self.dashboard.laser_button_s.check_mouse_hover(mouse_x, mouse_y)
+        self.dashboard.cactus_button.check_mouse_hover(mouse_x, mouse_y)
         self.dashboard.repair_switch.check_mouse_hover(mouse_x, mouse_y)
 
     def click_mouse(self):
         # This function currently does not need mouse_x or mouse_y, but
         # it might need it in the future depending on what we use it for.
         if self.state == const.MENU:
-            self.state = const.PLAYING
+            self.begin_level()
             return
 
         if self.state == const.PLAYING or self.state == const.REPAIRING:
@@ -127,6 +142,11 @@ class Game:
             if self.dashboard.laser_button_s.moused_over and \
                 not self.ship.is_disabled(const.LASER_STBD):
                 self.dashboard.radar.fire_laser(const.SOUTH)
+            if self.dashboard.cactus_button.moused_over:
+                self.pause()
+                self.tut_progress = 0
+                self.state = const.TUTORIAL
+                self.active_text_box = tutorial.get_text(self.tut_progress)
             if self.dashboard.repair_switch.moused_over and \
                 not self.ship.is_disabled(const.REPAIR):
                 if self.state == const.PLAYING:
@@ -137,21 +157,39 @@ class Game:
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
             # to the buttons. I might just have to do this on a case-by-case basis.
+            button_list = self.active_text_box.buttons
             # I know the first button of the GAME OVER text goes to the title screen.
-            if self.active_text_box.buttons[0].moused_over and (self.state == const.FIRE_OUT or \
+            if button_list[0].moused_over and (self.state == const.FIRE_OUT or \
                 self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT):
                 self.begin()
                 return
             # The first button of the WIN_LEVEL text advances to the next level.
-            if self.active_text_box.buttons[0].moused_over and self.state == const.WIN_LEVEL:
+            if button_list[0].moused_over and self.state == const.WIN_LEVEL:
                 self.level_up()
                 return
             # The first button of the WIN_GAME text brings you back to the main menu
-            if self.active_text_box.buttons[0].moused_over and self.state == const.WIN_GAME:
+            if button_list[0].moused_over and self.state == const.WIN_GAME:
                 self.begin()
                 return
             # The first button of the event text returns to normal gameplay
-            if self.active_text_box.buttons[0].moused_over and self.state == const.EVENT:
+            if button_list[0].moused_over and self.state == const.EVENT:
+                self.unpause()
+                self.state = const.PLAYING
+                self.active_text_box = None
+                return
+            # The first button of tutorial text advances the tutorial, unless tutorial is finished.
+            if button_list[0].moused_over and self.state == const.TUTORIAL:
+                if self.tut_progress >= 10: # last tutorial text
+                    self.unpause()
+                    self.state = const.PLAYING
+                    self.active_text_box = None
+                    return
+                else:
+                    self.tut_progress += 1
+                    self.active_text_box = tutorial.get_text(self.tut_progress)
+                    return
+            # The second button of tutorial text skips the tutorial.
+            if len(button_list) >= 2 and button_list[1].moused_over and self.state == const.TUTORIAL:
                 self.unpause()
                 self.state = const.PLAYING
                 self.active_text_box = None
@@ -192,10 +230,10 @@ class Game:
         self.state = const.EVENT
         self.pause()
         if self.event_target_flvl == 0:
-            event_text = 'The fire in your ship\'s ' + const.room_names[event_room_id] + ' room is starting to wear down the hull. ' + \
+            event_text = 'The fire in your ship\'s ' + const.ROOM_NAMES[event_room_id] + ' room is starting to wear down the hull. ' + \
                 'If you don\'t extinguish it soon, the ship will take damage.'
         else:
-            event_text = 'A particularly annoying species of space termites has infested the ' + const.room_names[event_room_id] + ' room! ' + \
+            event_text = 'A particularly annoying species of space termites has infested the ' + const.ROOM_NAMES[event_room_id] + ' room! ' + \
                 'You can exterminate them by setting the room on fire, but if you take too long they\'ll damage your hull. '
         self.active_text_box = TextBox(event_text, const.MED, 'EVENT')
         self.active_text_box.add_button('Resume', const.GREEN)
@@ -208,7 +246,7 @@ class Game:
         self.repair_start_time = time.time()
         self.state = const.EVENT
         self.pause()
-        repair_text = 'The ' + const.room_names[room_id] + ' system is breaking! If it isn\'t fixed soon,' + \
+        repair_text = 'The ' + const.ROOM_NAMES[room_id] + ' system is breaking! If it isn\'t fixed soon,' + \
             'it will become permanently disabled. (To repair it, click on the repair button and then ' + \
             'on the room you want to repair)'
         self.active_text_box = TextBox(repair_text, const.MED, 'EVENT')
@@ -347,7 +385,6 @@ class Game:
                 self.dashboard.take_damage(damage_taken)
                 if damage_taken > 0:
                     self.damage_anim_start = time.time()
-                
                 self.last_r_tick = current_time
 
             # Check events
@@ -358,7 +395,7 @@ class Game:
                     self.damage_anim_start = time.time()
                 self.event_room.is_event = False
                 self.event_room = None
-            
+
             # Check repair events
             if self.repair_room is not None and current_time - self.repair_start_time >= self.repair_time:
                 self.repair_room.is_broken = True

@@ -13,7 +13,8 @@ BRIDGE_OUT = 4
 WIN_LEVEL = 5
 EVENT = 6
 WIN_GAME = 7
-REPAIRING = 8
+TUTORIAL = 8
+REPAIRING = 9
 
 ## ******* ROOM TYPES *******
 EMPTY = 0
@@ -25,7 +26,7 @@ LASER_STBD = 5
 SHIELD = 6
 REPAIR = 7
 
-room_names = ['empty', 'bridge', 'sensors', 'radar', 'port laser', 'starboard laser', 'shield']
+ROOM_NAMES = ['empty', 'bridge', 'sensors', 'radar', 'port laser', 'starboard laser', 'shield']
 
 ## ******* COLOURS ***********
 BLACK = (0, 0, 0) # could also use pygame.Color('white'), but idk the difference
