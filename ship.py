@@ -13,11 +13,11 @@ class Ship:
             Room(200, 210, [1, 2, 5, 6], const.EMPTY),
             Room(300, 75, [2, 5, 7], const.SENSORS),
             Room(300, 165, [2, 3, 4, 6, 8, 9], const.EMPTY),
-            Room(300, 255, [3, 5, 10], const.LASER_PORT),
-            Room(400, 30, [4, 8], const.EMPTY),
+            Room(300, 255, [3, 5, 10], const.EMPTY),
+            Room(400, 30, [4, 8], const.LASER_PORT),
             Room(400, 120, [5, 7, 9, 11], const.EMPTY),
-            Room(400, 210, [5, 8, 10, 12], const.LASER_STBD),
-            Room(400, 300, [6, 9], const.EMPTY),
+            Room(400, 210, [5, 8, 10, 12], const.EMPTY),
+            Room(400, 300, [6, 9], const.LASER_STBD),
             Room(500, 120, [8, 13], const.EMPTY),
             Room(500, 210, [9, 13], const.EMPTY),
             Room(600, 165, [11, 12], const.BRIDGE)
@@ -30,7 +30,7 @@ class Ship:
 
         # empty, bridge, sensors, radar, laser (port / starboard)
         # see const.py
-        self.disabled_systems = [False]*6
+        self.disabled_systems = [False]*7
 
     def fire_tick(self):
         """Increases fire levels of rooms on fire, spreads fire to
@@ -89,6 +89,9 @@ class Ship:
                     self.disabled_systems[i.type] = True
                 else:
                     self.disabled_systems[i.type] = False
+    
+    def is_disabled(self, system):
+        return self.disabled_systems[system]
 
     def draw(self):
         # Draw connections before drawing rooms

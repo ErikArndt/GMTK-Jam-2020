@@ -12,8 +12,6 @@ LEVEL_CLEAR_TIME = 90 # seconds to survive
 class Game:
     def __init__(self, surface):
         self.surface = surface
-        # technically I could just call self.begin() here, but pylint
-        # gets mad at me when I don't define all fields in __init__
         self.state = const.MENU
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface)
@@ -40,6 +38,24 @@ class Game:
         """Resets game state and begins a new game.
         """
         self.__init__(self.surface)
+
+    def level_up(self):
+        self.level += 1
+        self.state = const.PLAYING
+        self.dashboard = Dashboard(self.surface) # reset dash
+        self.ship = Ship(self.surface) # reset ship
+        self.active_text_box = None # clear text box
+
+        self.last_f_tick = time.time()
+        self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
+
+        self.level_start_time = time.time()
+
+        if self.level >= 2:
+            self.ship.room_list[0].type = const.SHIELD # replace with room-picker
+
+        self.is_paused = False
+        self.time_paused = None
 
     def press_key(self, key):
         if key == pygame.K_SPACE: # spacebar
@@ -82,9 +98,7 @@ class Game:
                 return
             # The first button of the WIN text advances to the next level.
             if self.active_text_box.buttons[0].moused_over and self.state == const.WIN:
-                self.state = const.PLAYING
-                self.level += 1
-                self.begin()
+                self.level_up()
                 return
 
     def pause(self):

@@ -45,6 +45,8 @@ class Room:
                 letter = "L"
             elif self.type == const.LASER_STBD:
                 letter = "L"
+            elif self.type == const.SHIELD:
+                letter = "SH"
             room_text = const.TITLE_FONT_SM.render(letter, True, const.BLACK)
             surface.blit(room_text, (self.x_pos + (70 - room_text.get_width())/2, self.y_pos + 23))
 

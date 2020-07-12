@@ -19,6 +19,7 @@ SENSORS = 2
 RADAR = 3
 LASER_PORT = 4
 LASER_STBD = 5
+SHIELD = 6
 
 ## ******* COLOURS ***********
 BLACK = (0, 0, 0) # could also use pygame.Color('white'), but idk the difference
