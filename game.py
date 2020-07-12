@@ -2,6 +2,7 @@ import time
 import random
 import pygame
 import const
+import util
 from menu import draw_menu
 from dashboard import Dashboard
 from ship import Ship
@@ -15,7 +16,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 1
+        self.level = 3
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -32,12 +33,18 @@ class Game:
         self.event_time = 20
         self.event_start_time = 0
 
+        self.repair_room = None
+        self.repair_time = 5
+        self.repair_start_time = 0
+
         self.r_tick_time = 2   # seconds between radar ticks
         self.last_r_tick = time.time() - 1.5 # offset so they don't happen simultaneously
 
         self.lightyear_length = 10 # seconds it takes to travel 1 lightyear
         self.last_lightyear_tick = time.time()
         self.lightyears_left = 9
+
+        self.damage_anim_start = 0
 
         self.is_paused = False
         self.time_paused = None
@@ -104,6 +111,7 @@ class Game:
         self.dashboard.laser_button_n.check_mouse_hover(mouse_x, mouse_y)
         self.dashboard.laser_button_s.check_mouse_hover(mouse_x, mouse_y)
         self.dashboard.cactus_button.check_mouse_hover(mouse_x, mouse_y)
+        self.dashboard.repair_switch.check_mouse_hover(mouse_x, mouse_y)
 
     def click_mouse(self):
         # This function currently does not need mouse_x or mouse_y, but
@@ -112,15 +120,21 @@ class Game:
             self.begin_level()
             return
 
-        if self.state == const.PLAYING:
+        if self.state == const.PLAYING or self.state == const.REPAIRING:
             for room in self.ship.room_list:
                 if room.moused_over:
-                    if room.sprinkling:
-                        room.sprinkling = False
-                        self.ship.num_sprinkling -= 1
-                    elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
-                        room.sprinkling = True
-                        self.ship.num_sprinkling += 1
+                    if self.state == const.PLAYING:
+                        if room.sprinkling:
+                            room.sprinkling = False
+                            self.ship.num_sprinkling -= 1
+                        elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
+                            room.sprinkling = True
+                            self.ship.num_sprinkling += 1
+                    elif self.state == const.REPAIRING:
+                        if room.is_breaking:
+                            self.repair_room.is_breaking = False
+                            self.repair_room = None
+
             # dashboard buttons must be checked individually
             if self.dashboard.laser_button_n.moused_over and \
                 not self.ship.is_disabled(const.LASER_PORT):
@@ -133,6 +147,12 @@ class Game:
                 self.tut_progress = 0
                 self.state = const.TUTORIAL
                 self.active_text_box = tutorial.get_text(self.tut_progress)
+            if self.dashboard.repair_switch.moused_over and \
+                not self.ship.is_disabled(const.REPAIR):
+                if self.state == const.PLAYING:
+                    self.state = const.REPAIRING
+                elif self.state == const.REPAIRING:
+                    self.state = const.PLAYING
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
@@ -188,6 +208,7 @@ class Game:
         self.last_s_tick += time_missed
         self.last_r_tick += time_missed
         self.event_start_time += time_missed
+        self.repair_start_time += time_missed
 
     def start_event(self):
         if self.level == 1:
@@ -195,7 +216,7 @@ class Game:
         elif self.level == 2:
             num_systems = 5
         elif self.level == 3:
-            num_systems = 5
+            num_systems = 6
         event_room_id = random.randint(2, num_systems)
         for i in self.ship.room_list:
             if i.type == event_room_id:
@@ -216,6 +237,20 @@ class Game:
                 'You can exterminate them by setting the room on fire, but if you take too long they\'ll damage your hull. '
         self.active_text_box = TextBox(event_text, const.MED, 'EVENT')
         self.active_text_box.add_button('Resume', const.GREEN)
+
+    def start_repair(self, room_id):
+        for i in self.ship.room_list:
+            if i.type == room_id:
+                self.repair_room = i
+                self.repair_room.is_breaking = True
+        self.repair_start_time = time.time()
+        self.state = const.EVENT
+        self.pause()
+        repair_text = 'The ' + const.room_names[room_id] + ' system is breaking! If it isn\'t fixed soon,' + \
+            'it will become permanently disabled. (To repair it, click on the repair button and then ' + \
+            'on the room you want to repair)'
+        self.active_text_box = TextBox(repair_text, const.MED, 'EVENT')
+        self.active_text_box.add_button("Resume", const.GREEN)
 
     def tick(self):
         """Checks if fire and sprinklers need to activate, checks if you've won or lost,
@@ -274,7 +309,6 @@ class Game:
                 self.last_lightyear_tick = time.time()
                 level_str = LEVEL_DATA[self.level][str(self.lightyears_left)]
                 if 'event' in level_str:
-                    ## do event thing here
                     self.start_event()
                 if 'ship_n' in level_str:
                     self.dashboard.radar.add_alien(const.NORTH)
@@ -289,8 +323,14 @@ class Game:
                 if 'ast_se' in level_str:
                     self.dashboard.radar.add_asteroid(const.SOUTHEAST)
                 if 'repair' in level_str:
+                    if 'repair_sn' in level_str:
+                        room_id = const.SENSORS
+                    elif 'repair_rd' in level_str:
+                        room_id = const.RADAR
+                    elif 'repair_sh' in level_str:
+                        room_id = const.SHIELD
                     # make a module break and require repairs
-                    print('repair should have happened')
+                    self.start_repair(room_id)
 
             # Check fire
             if current_time - self.last_f_tick >= self.f_tick_time:
@@ -339,6 +379,8 @@ class Game:
                 shields_up = not self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
+                if damage_taken > 0:
+                    self.damage_anim_start = time.time()
                 self.last_r_tick = current_time
 
             # Check events
@@ -346,8 +388,15 @@ class Game:
                 if self.event_target_flvl == 0 and self.event_room.fire_level == 2 or \
                     self.event_target_flvl == 2 and self.event_room.fire_level <= 1:
                     self.dashboard.take_damage(3)
+                    self.damage_anim_start = time.time()
                 self.event_room.is_event = False
                 self.event_room = None
+            
+            # Check repair events
+            if self.repair_room is not None and current_time - self.repair_start_time >= self.repair_time:
+                self.repair_room.is_broken = True
+                self.repair_room.is_breaking = False
+                self.repair_room = None
 
     def draw(self):
         if self.state == const.MENU:
@@ -358,3 +407,17 @@ class Game:
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
             if self.active_text_box:
                 self.active_text_box.draw(self.surface)
+        # red flash when you take damage
+        current_time = time.time()
+        # from 0 to 0.1, transparency goes from 0 to 100, and then from 0.1 to 0.2 it goes back down
+        if current_time - self.damage_anim_start <= 0.1:
+            transparency = (current_time - self.damage_anim_start) * 1000
+        else:
+            transparency = (self.damage_anim_start - current_time + 0.2) * 1000
+        
+        if current_time - self.damage_anim_start <= 0.2:
+            overlay_surface = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT), pygame.HWSURFACE)
+            overlay_surface.set_alpha(transparency) # the surface is now semi-transparent
+            util.bevelled_rect(overlay_surface, (255, 0, 0), (0, 0, const.WIN_LENGTH, const.WIN_HEIGHT), \
+                15)
+            self.surface.blit(overlay_surface, (0, 0))

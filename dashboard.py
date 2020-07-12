@@ -112,6 +112,7 @@ class Dashboard:
 
         self.laser_button_n = DashButton((self.x_pos + 510, self.y_pos + 30, 70, 70))
         self.laser_button_s = DashButton((self.x_pos + 510, self.y_pos + 110, 70, 70))
+        self.repair_switch = DashButton((self.x_pos + 300, self.y_pos + 70, 70, 70))
         self.laser_n_disabled = False
         self.laser_s_disabled = False
         self.cactus_button = DashButton((BORDER_SIZE, const.WIN_HEIGHT - BORDER_SIZE - 80, 55, 80))
@@ -194,4 +195,7 @@ class Dashboard:
             pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
             fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
             self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 133))
+        
+        # repair button
+        pygame.draw.rect(self.surface, (50, 0, 0), (self.x_pos + 300, self.y_pos + 70, 70, 70))
 

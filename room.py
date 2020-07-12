@@ -15,6 +15,8 @@ class Room:
 
         self.moused_over = False
         self.is_event = False
+        self.is_breaking = False # for repair events
+        self.is_broken = False
         self.sprinkling = False
 
         self.type = room_type
@@ -48,12 +50,20 @@ class Room:
                 letter = "L"
             elif self.type == const.SHIELD:
                 letter = "SH"
+            elif self.type == const.REPAIR:
+                letter = "RE"
             room_text = const.TITLE_FONT_SM.render(letter, True, const.BLACK)
             surface.blit(room_text, (self.x_pos + (70 - room_text.get_width())/2, self.y_pos + 23))
         if self.is_event:
             overlay_surface = pygame.Surface((self.size, self.size), pygame.HWSURFACE)
             overlay_surface.set_alpha(50) # the surface is now semi-transparent
             util.bevelled_rect(overlay_surface, (0, 255, 0), (0, 0, self.size, self.size), \
+                15)
+            surface.blit(overlay_surface, (self.x_pos, self.y_pos))
+        if self.is_breaking:
+            overlay_surface = pygame.Surface((self.size, self.size), pygame.HWSURFACE)
+            overlay_surface.set_alpha(70) # the surface is now semi-transparent
+            util.bevelled_rect(overlay_surface, (0, 0, 0), (0, 0, self.size, self.size), \
                 15)
             surface.blit(overlay_surface, (self.x_pos, self.y_pos))
 
