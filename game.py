@@ -16,7 +16,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 3
+        self.level = 1
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -246,7 +246,7 @@ class Game:
         self.repair_start_time = time.time()
         self.state = const.EVENT
         self.pause()
-        repair_text = 'The ' + const.room_names[room_id] + ' system is breaking! If it isn\'t fixed soon,' + \
+        repair_text = 'The ' + const.ROOM_NAMES[room_id] + ' system is breaking! If it isn\'t fixed soon,' + \
             'it will become permanently disabled. (To repair it, click on the repair button and then ' + \
             'on the room you want to repair)'
         self.active_text_box = TextBox(repair_text, const.MED, 'EVENT')
@@ -391,7 +391,7 @@ class Game:
                     self.damage_anim_start = time.time()
                 self.event_room.is_event = False
                 self.event_room = None
-            
+
             # Check repair events
             if self.repair_room is not None and current_time - self.repair_start_time >= self.repair_time:
                 self.repair_room.is_broken = True
