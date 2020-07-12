@@ -69,8 +69,6 @@ class Game:
         if key == pygame.K_SPACE: # spacebar
             if self.state == const.MENU:
                 self.state = const.PLAYING
-            if self.state == const.PLAYING:
-                self.start_event()
 
     def move_mouse(self, mouse_x, mouse_y):
         for room in self.ship.room_list:
@@ -239,6 +237,8 @@ class Game:
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
+                self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
+                self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
             if current_time - self.last_f_anim >= self.f_anim_time:
                 for i in self.ship.room_list:
                     if i.fire_anim_state >= 2:
@@ -261,6 +261,8 @@ class Game:
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
+                self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
+                self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
             # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
                 shields_up = not self.ship.is_disabled(const.SHIELD)
