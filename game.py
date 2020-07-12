@@ -8,6 +8,7 @@ from dashboard import Dashboard
 from ship import Ship
 from text import TextBox
 from levels import LEVEL_DATA
+from sound import SOUNDS
 import tutorial
 
 SPRINKLER_LIMIT = 3
@@ -138,13 +139,20 @@ class Game:
                         if room.sprinkling:
                             room.sprinkling = False
                             self.ship.num_sprinkling -= 1
+                            SOUNDS['press'].play()
                         elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
                             room.sprinkling = True
                             self.ship.num_sprinkling += 1
+                            SOUNDS['press'].play()
+                        elif not room.sprinkling: # sprinkler limit reached
+                            SOUNDS['invalid'].play()
                     elif self.state == const.REPAIRING:
                         if room.is_breaking:
                             self.repair_room.is_breaking = False
                             self.repair_room = None
+                            SOUNDS['press'].play()
+                        else:
+                            SOUNDS['invalid'].play()
 
             # dashboard buttons must be checked individually
             if self.dashboard.laser_button_n.moused_over and \
@@ -164,7 +172,7 @@ class Game:
                     self.state = const.REPAIRING
                 elif self.state == const.REPAIRING:
                     self.state = const.PLAYING
-        
+
         if self.state == const.INSTALLING:
             for room_id in range(len(self.ship.room_list)):
                 if self.ship.room_list[room_id].moused_over and self.ship.room_list[room_id].type == const.EMPTY:
@@ -174,7 +182,10 @@ class Game:
                     elif self.level == 3:
                         self.ship.room_list[room_id].type = const.REPAIR
                     self.state = const.PLAYING
+                    SOUNDS['press'].play()
                     self.unpause()
+                elif self.ship.room_list[room_id].moused_over:
+                    SOUNDS['invalid'].play()
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality

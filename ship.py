@@ -1,6 +1,7 @@
 import random
 import pygame
 from room import Room
+from sound import SOUNDS
 import const
 
 class Ship:
@@ -35,6 +36,7 @@ class Ship:
         """Increases fire levels of rooms on fire, spreads fire to
         adjacent rooms at random.
         """
+        SOUNDS['fire'].play()
         for room in self.room_list:
             if room.fire_level == 0:
                 for j in room.adjacent:

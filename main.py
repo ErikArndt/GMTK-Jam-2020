@@ -1,9 +1,12 @@
 import pygame
 import const
 import img
+import sound
 import background
 from game import Game
 
+pygame.mixer.pre_init(22050, -16, 2, 2048) # idk what this does but apparently I need it
+pygame.mixer.init()
 pygame.init()
 
 WINDOW = pygame.display.set_mode((const.WIN_LENGTH, const.WIN_HEIGHT)) # defines the game window
@@ -11,6 +14,7 @@ pygame.display.set_caption('I Am Not On Fire Yet')
 SURFACE = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT))
 
 img.init_images() # must be done after setting display mode
+sound.init_sounds()
 
 def run_game(window, surface):
     clock = pygame.time.Clock()
