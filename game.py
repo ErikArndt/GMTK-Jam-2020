@@ -9,7 +9,7 @@ from text import TextBox
 from levels import LEVEL_DATA
 import tutorial
 
-SPRINKLER_LIMIT = 4
+SPRINKLER_LIMIT = 3
 
 class Game:
     def __init__(self, surface):
@@ -25,7 +25,7 @@ class Game:
         self.last_f_tick = time.time()
         self.last_f_anim = time.time()
 
-        self.s_tick_time = 3   # seconds between sprinkler ticks
+        self.s_tick_time = 2   # seconds between sprinkler ticks
         self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
         self.event_room = None
         self.event_target_flvl = 0
@@ -181,6 +181,8 @@ class Game:
         self.last_f_tick += time_missed
         self.last_f_anim += time_missed
         self.last_s_tick += time_missed
+        self.last_r_tick += time_missed
+        self.event_start_time += time_missed
 
     def start_event(self):
         if self.level == 1:
@@ -295,6 +297,10 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
+                # Checks event goal
+                if self.event_room is not None and self.event_target_flvl == 2 and self.event_room.fire_level == 2:
+                    self.event_room.is_event = False
+                    self.event_room = None
             if current_time - self.last_f_anim >= self.f_anim_time:
                 for i in self.ship.room_list:
                     if i.fire_anim_state >= 2:
@@ -319,6 +325,10 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
+                # Checks event goal
+                if self.event_room is not None and self.event_target_flvl == 0 and self.event_room.fire_level <= 1:
+                    self.event_room.is_event = False
+                    self.event_room = None
             # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
                 shields_up = not self.ship.is_disabled(const.SHIELD)
@@ -330,7 +340,7 @@ class Game:
             if self.event_room is not None and current_time - self.event_start_time >= self.event_time:
                 if self.event_target_flvl == 0 and self.event_room.fire_level == 2 or \
                     self.event_target_flvl == 2 and self.event_room.fire_level <= 1:
-                    self.dashboard.take_damage()
+                    self.dashboard.take_damage(3)
                 self.event_room.is_event = False
                 self.event_room = None
 

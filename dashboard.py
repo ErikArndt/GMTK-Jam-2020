@@ -82,7 +82,7 @@ class Sensors:
         else:
             pygame.draw.rect(surface, (50, 50, 50), (self.x_pos + 80, self.y_pos + 10, 150, 10 + 2*BAR_WIDTH))
             fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
-            surface.blit(fire_text, (self.x_pos + 130 + (150 - fire_text.get_width())/2, self.y_pos + 25))
+            surface.blit(fire_text, (self.x_pos + 80 + (150 - fire_text.get_width())/2, self.y_pos + 25))
 
 class DashButton:
     def __init__(self, rect):
