@@ -44,6 +44,23 @@ class Game:
 
         self.level = 1
         self.level_start_time = time.time()
+    
+    def level_up(self):
+        self.level += 1
+        self.state = const.PLAYING
+        self.dashboard = Dashboard(self.surface)
+        self.ship = Ship(self.surface)
+        self.active_text_box = None # can only have one at a time
+
+        self.f_tick_time = 5 # seconds between fire ticks
+        self.s_tick_time = 3 # seconds between sprinkler ticks
+        self.last_f_tick = time.time()
+        self.last_s_tick = time.time() - 0.5 # offset so they don't happen simultaneously
+
+        self.level_start_time = time.time()
+
+        if self.level >= 2:
+            self.ship.room_list[0].type = const.SHIELD
 
     def press_key(self, key):
         if key == pygame.K_SPACE: # spacebar
@@ -86,9 +103,7 @@ class Game:
                 return
             # The first button of the WIN text advances to the next level.
             if self.active_text_box.buttons[0].moused_over and self.state == const.WIN:
-                self.state = const.PLAYING
-                self.level += 1
-                self.begin()
+                self.level_up()
                 return
 
     def calculate_lightyears(self):
