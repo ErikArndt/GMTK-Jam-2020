@@ -84,6 +84,18 @@ class Sensors:
             fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
             surface.blit(fire_text, (self.x_pos + 130 + (150 - fire_text.get_width())/2, self.y_pos + 25))
 
+class DashButton:
+    def __init__(self, rect):
+        self.rect = rect
+        self.moused_over = False
+
+    def check_mouse_hover(self, mouse_x, mouse_y):
+        if mouse_x > self.rect[0] and mouse_x < self.rect[0] + self.rect[2] and \
+            mouse_y > self.rect[1] and mouse_y < self.rect[1] + self.rect[3]:
+            self.moused_over = True
+        else:
+            self.moused_over = False
+
 class Dashboard:
     def __init__(self, surface):
         self.surface = surface
@@ -97,6 +109,9 @@ class Dashboard:
             self.y_pos + round(self.height/2), radar_radius)
 
         self.sensors = Sensors(self.x_pos, self.y_pos)
+
+        self.laser_button_n = DashButton((self.x_pos + 510, self.y_pos + 30, 70, 70))
+        self.laser_button_s = DashButton((self.x_pos + 510, self.y_pos + 110, 70, 70))
 
     def take_damage(self, damage=1):
         """Decreases the Hull bar by the amount given, or 1 if none is given.
@@ -154,3 +169,13 @@ class Dashboard:
         spaceport_text = const.DEFAULT_FONT_SM.render('Next Spaceport', True, const.BLACK)
         self.surface.blit(lightyear_text, (self.x_pos + 130, self.y_pos + 120))
         self.surface.blit(spaceport_text, (self.x_pos + 130, self.y_pos + 120 + lightyear_text.get_height()))
+
+        # lasers
+        laser_text = const.DEFAULT_FONT_SM.render('Lasers', True, const.BLACK)
+        self.surface.blit(laser_text, (self.x_pos + 515, self.y_pos + BORDER_SIZE))
+        pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
+        pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 80), \
+            (self.x_pos + 545, self.y_pos + 50), (self.x_pos + 560, self.y_pos + 80)])
+        pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
+        pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 130), \
+            (self.x_pos + 545, self.y_pos + 160), (self.x_pos + 560, self.y_pos + 130)])

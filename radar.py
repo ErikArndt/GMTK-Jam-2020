@@ -45,6 +45,14 @@ class Radar:
     def add_asteroid(self, direction):
         self.asteroids.append(Asteroid(direction))
 
+    def fire_laser(self, direction):
+        if direction == const.NORTH:
+            if len(self.alien_queue_N) > 0:
+                self.alien_queue_N.pop(0)
+        elif direction == const.SOUTH:
+            if len(self.alien_queue_S) > 0:
+                self.alien_queue_S.pop(0)
+
     def radar_tick(self, shields_up):
         """Moves aliens and asteroids closer to the center of the radar, and
         returns the hull damage taken from alien gunfire and asteroid collisions.
