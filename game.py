@@ -82,6 +82,9 @@ class Game:
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             for btn in self.active_text_box.buttons:
                 btn.check_mouse_hover(mouse_x, mouse_y)
+        # dashboard buttons must be checked individually
+        self.dashboard.laser_button_n.check_mouse_hover(mouse_x, mouse_y)
+        self.dashboard.laser_button_s.check_mouse_hover(mouse_x, mouse_y)
 
     def click_mouse(self):
         # This function currently does not need mouse_x or mouse_y, but
@@ -90,15 +93,21 @@ class Game:
             self.state = const.PLAYING
             return
 
-        # Should these be restricted to certain game states?
-        for room in self.ship.room_list:
-            if room.moused_over:
-                if room.sprinkling:
-                    room.sprinkling = False
-                    self.ship.num_sprinkling -= 1
-                elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
-                    room.sprinkling = True
-                    self.ship.num_sprinkling += 1
+        if self.state == const.PLAYING:
+            for room in self.ship.room_list:
+                if room.moused_over:
+                    if room.sprinkling:
+                        room.sprinkling = False
+                        self.ship.num_sprinkling -= 1
+                    elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
+                        room.sprinkling = True
+                        self.ship.num_sprinkling += 1
+            # dashboard buttons must be checked individually
+            if self.dashboard.laser_button_n.moused_over:
+                self.dashboard.radar.fire_laser(const.NORTH)
+            if self.dashboard.laser_button_s.moused_over:
+                self.dashboard.radar.fire_laser(const.SOUTH)
+
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
             # to the buttons. I might just have to do this on a case-by-case basis.
@@ -111,10 +120,12 @@ class Game:
             if self.active_text_box.buttons[0].moused_over and self.state == const.WIN:
                 self.level_up()
                 return
+            # The first button of the event text returns to normal gameplay
             if self.active_text_box.buttons[0].moused_over and self.state == const.EVENT:
                 self.unpause()
                 self.state = const.PLAYING
                 self.active_text_box = None
+                return
 
     def pause(self):
         self.is_paused = True
@@ -252,7 +263,7 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
             # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
-                shields_up = self.ship.is_disabled(const.SHIELD)
+                shields_up = not self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
                 
