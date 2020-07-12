@@ -115,6 +115,7 @@ class Dashboard:
         self.repair_switch = DashButton((self.x_pos + 300, self.y_pos + 70, 70, 70))
         self.laser_n_disabled = False
         self.laser_s_disabled = False
+        self.repair_disabled = False
 
     def take_damage(self, damage=1):
         """Decreases the Hull bar by the amount given, or 1 if none is given.
@@ -196,5 +197,12 @@ class Dashboard:
             self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 133))
         
         # repair button
-        pygame.draw.rect(self.surface, (50, 0, 0), (self.x_pos + 300, self.y_pos + 70, 70, 70))
+        repair_text = const.DEFAULT_FONT_SM.render('Repair', True, const.BLACK)
+        self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
+        if not self.repair_disabled:
+            pygame.draw.rect(self.surface, (0, 200, 0), (self.x_pos + 340, self.y_pos + 110, 70, 70))
+        else:
+            pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 340, self.y_pos + 110, 70, 70))
+            fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
+            self.surface.blit(fire_text, (self.x_pos + 340 + (70 - fire_text.get_width())/2, self.y_pos + 133))
 

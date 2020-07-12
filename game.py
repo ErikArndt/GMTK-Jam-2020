@@ -218,7 +218,7 @@ class Game:
         """Checks if fire and sprinklers need to activate, checks if you've won or lost,
         and does whatever other things need to happen each frame.
         """
-        if self.state == const.PLAYING:
+        if self.state == const.PLAYING or self.state == const.REPAIRING:
             # Check if you've lost the game
             if self.ship.num_onfire == 0:
                 self.state = const.FIRE_OUT
@@ -293,6 +293,8 @@ class Game:
                         room_id = const.SHIELD
                     # make a module break and require repairs
                     self.start_repair(room_id)
+            if self.state == const.REPAIRING and self.ship.disabled_systems[7]:
+                self.state = const.PLAYING
 
             # Check fire
             if current_time - self.last_f_tick >= self.f_tick_time:
@@ -304,6 +306,7 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
+                self.dashboard.repair_disabled = self.ship.disabled_systems[7]
                 # Checks event goal
                 if self.event_room is not None and self.event_target_flvl == 2 and self.event_room.fire_level == 2:
                     self.event_room.is_event = False
@@ -332,6 +335,7 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
+                self.dashboard.repair_disabled = self.ship.disabled_systems[7]
                 # Checks event goal
                 if self.event_room is not None and self.event_target_flvl == 0 and self.event_room.fire_level <= 1:
                     self.event_room.is_event = False
