@@ -43,7 +43,6 @@ class Game:
         self.time_paused = None
 
         self.tut_progress = 0
-        self.skip_tutorial = False
 
     def begin(self):
         """Resets game state and begins a new game.
@@ -104,6 +103,7 @@ class Game:
         # dashboard buttons must be checked individually
         self.dashboard.laser_button_n.check_mouse_hover(mouse_x, mouse_y)
         self.dashboard.laser_button_s.check_mouse_hover(mouse_x, mouse_y)
+        self.dashboard.cactus_button.check_mouse_hover(mouse_x, mouse_y)
 
     def click_mouse(self):
         # This function currently does not need mouse_x or mouse_y, but
@@ -128,6 +128,11 @@ class Game:
             if self.dashboard.laser_button_s.moused_over and \
                 not self.ship.is_disabled(const.LASER_STBD):
                 self.dashboard.radar.fire_laser(const.SOUTH)
+            if self.dashboard.cactus_button.moused_over:
+                self.pause()
+                self.tut_progress = 0
+                self.state = const.TUTORIAL
+                self.active_text_box = tutorial.get_text(self.tut_progress)
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality

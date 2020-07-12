@@ -75,7 +75,8 @@ def get_text(progress):
         tut_text_box.add_button('Yeah, whatever', const.GREEN)
     elif progress == 10:
         tut_text = 'Well, that\'s about all the advice I have. It shouldn\'t take too long to reach ' + \
-            'the nearest spaceport. Good luck!'
+            'the nearest spaceport. Click the cactus on the dashboard to repeat this tutorial at ' + \
+            'any time. Good luck!'
         tut_text_box = TextBox(tut_text, const.MED)
         tut_text_box.add_button('We\'re screwed.', const.GREEN)
     return tut_text_box
