@@ -199,7 +199,7 @@ class Dashboard:
         repair_text = const.DEFAULT_FONT_SM.render('Repair', True, const.BLACK)
         self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
         if repair_state:
-            self.surface.blit(IMAGES['lever'], (self.x_pos + 240, self.y_pos + 100))
+            self.surface.blit(IMAGES['lever'], (self.x_pos + 320, self.y_pos + 133))
 
 
 

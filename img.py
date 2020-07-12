@@ -66,7 +66,7 @@ def init_images():
     # Dashboard
     dashboard_nolever = pygame.image.load('images/dashboard_sans_lever.png').convert_alpha()
     IMAGES['dashboard_sans_lever'] = pygame.transform.scale(dashboard_nolever, (800, 200))
-    dashboard_img = pygame.image.load('images/dashboard transparent.png').convert_alpha()
+    dashboard_img = pygame.image.load('images/dashboard.png').convert_alpha()
     IMAGES['dashboard'] = pygame.transform.scale(dashboard_img, (800, 200))
     flipped_lever = pygame.image.load('images/flipped lever.png').convert_alpha()
     IMAGES['lever'] = pygame.transform.scale(flipped_lever, (125, 45))

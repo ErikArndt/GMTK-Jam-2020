@@ -168,10 +168,11 @@ class Game:
                 self.active_text_box = tutorial.get_text(self.tut_progress)
             if self.dashboard.repair_switch.moused_over and \
                 not self.ship.is_disabled(const.REPAIR):
-                if self.state == const.PLAYING:
-                    self.state = const.REPAIRING
-                elif self.state == const.REPAIRING:
-                    self.state = const.PLAYING
+                if self.level == 3:
+                    if self.state == const.PLAYING:
+                        self.state = const.REPAIRING
+                    elif self.state == const.REPAIRING:
+                        self.state = const.PLAYING
 
         if self.state == const.INSTALLING:
             for room_id in range(len(self.ship.room_list)):
