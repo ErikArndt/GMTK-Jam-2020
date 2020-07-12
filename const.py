@@ -33,6 +33,7 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 BLUE = (50, 50, 255)
+ORANGE = (255, 127, 0)
 
 ## ******* SETTINGS **********
 WIN_LENGTH = 800 # arbitrary, feel free to change
@@ -41,7 +42,7 @@ WIN_HEIGHT = 600 # arbitrary, feel free to change
 ## ******* FONTS ************
 DEFAULT_FONT = pygame.font.Font('fonts/nasalization-rg.ttf', 24)
 DEFAULT_FONT_SM = pygame.font.Font('fonts/nasalization-rg.ttf', 16)
-TITLE_FONT = pygame.font.Font('fonts/ethnocentric-rg.ttf', 60)
+TITLE_FONT = pygame.font.Font('fonts/ethnocentric-rg.ttf', 48)
 TITLE_FONT_SM = pygame.font.Font('fonts/ethnocentric-rg.ttf', 24)
 DIGITAL_FONT = pygame.font.Font('fonts/digital-readout-rg.ttf', 60) # mainly used for numbers
 
