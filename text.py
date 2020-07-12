@@ -1,6 +1,7 @@
 import pygame
 import const
 import util
+from img import IMAGES
 
 BUTTON_HEIGHT = 50
 MARGIN = 5 # pixels around text/buttons
@@ -38,7 +39,7 @@ class TextBoxButton:
             self.rect[1] + self.rect[3]/2 - button_text.get_height()/2))
 
 class TextBox:
-    def __init__(self, text, size, title=None):
+    def __init__(self, text, size, title=None, cactus=False):
         self.text = text
         # The following values haven't been tweaked yet
         if size == const.SMALL:
@@ -57,10 +58,12 @@ class TextBox:
         self.y_pos = const.WIN_HEIGHT/2 - self.height/2
         self.buttons = [] # must be added with add_button method
         self.title = title
+        self.cactus = cactus and (self.width > 300)
 
     def add_button(self, text, colour):
         """Adds a button to the bottom of the text box. No more than 3 buttons can
         be added. (Might have to set different limits based on text box size)
+        Note: Text box position should be set before adding buttons.
 
         Args:
             text (string): The word or words on the button
@@ -112,25 +115,34 @@ class TextBox:
             self.width + 10, self.height + 10), 10)
         pygame.draw.rect(surface, const.WHITE, (self.x_pos, self.y_pos, self.width, self.height))
 
+        text_x = self.x_pos + MARGIN
+        text_y = self.y_pos + MARGIN
+        text_width = self.width - MARGIN*2
+        text_height = self.height - MARGIN*2
         if len(self.buttons) > 0:
-            text_rect = (self.x_pos + MARGIN, self.y_pos + MARGIN, \
-                self.width - MARGIN*2, self.height - MARGIN*2 - BUTTON_HEIGHT)
-        else:
-            text_rect = (self.x_pos + MARGIN, self.y_pos + MARGIN, \
-                self.width - MARGIN*2, self.height - MARGIN*2)
-        draw_text(surface, self.text, const.BLACK, text_rect, self.font, True)
+            text_height -= BUTTON_HEIGHT
+        if self.title:
+            text_y += 5
+            text_height -= 5
+        if self.cactus:
+            text_x += 80
+            text_width -= 80
+            cactus_img = pygame.transform.scale(IMAGES['cactus'], (80, 120))
+            surface.blit(cactus_img, (self.x_pos + MARGIN, self.y_pos + MARGIN))
+        draw_text(surface, self.text, const.BLACK, (text_x, text_y, text_width, text_height), self.font, True)
         for button in self.buttons:
             button.draw(surface)
 
         # again, until I have a real image, a white rectangle is the best title you're getting
-        title_text = const.TITLE_FONT_SM.render(self.title, True, const.BLACK)
-        title_x = round(self.x_pos + self.width/2 - title_text.get_width()/2)
-        title_y = round(self.y_pos - title_text.get_height())
-        pygame.draw.rect(surface, const.GRAY, (title_x - 5, title_y - 5, title_text.get_width() + 10, \
-            title_text.get_height() + 10), 10)
-        pygame.draw.rect(surface, const.WHITE, (title_x, title_y, title_text.get_width(), \
-            title_text.get_height()))
-        surface.blit(title_text, (title_x, title_y))
+        if self.title:
+            title_text = const.TITLE_FONT_SM.render(self.title, True, const.BLACK)
+            title_x = round(self.x_pos + self.width/2 - title_text.get_width()/2)
+            title_y = round(self.y_pos - title_text.get_height())
+            pygame.draw.rect(surface, const.GRAY, (title_x - 5, title_y - 5, title_text.get_width() + 10, \
+                title_text.get_height() + 10), 10)
+            pygame.draw.rect(surface, const.WHITE, (title_x, title_y, title_text.get_width(), \
+                title_text.get_height()))
+            surface.blit(title_text, (title_x, title_y))
 
 def draw_text(surface, text, color, rect, font, aa=False, bkg=None):
     '''
