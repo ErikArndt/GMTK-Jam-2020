@@ -50,6 +50,8 @@ class Game:
         self.is_paused = False
         self.time_paused = None
 
+        self.shield_room_id = 0
+
         self.tut_progress = 0
 
     def begin(self):
@@ -63,11 +65,20 @@ class Game:
             self.active_text_box = tutorial.get_text(self.tut_progress)
             self.pause()
         elif self.level == 2:
-            self.state = const.PLAYING
-            self.ship.room_list[0].type = const.SHIELD # replace with room-picker
+            self.state = const.INSTALLING
+            self.pause()
+            install_text = 'Seeing as there is an asteroid field between you and the next spaceport, you decide to purchase an ' + \
+                'asteroid shield that will protect you from them as long as it\'s not burning. (Click on a room to place it there)'
+            self.active_text_box = TextBox(install_text, const.MED, 'NEW SYSTEM')
+            self.active_text_box.add_button("Resume", const.GREEN)
         elif self.level == 3:
-            self.state = const.PLAYING
-            self.ship.room_list[6].type = const.REPAIR # replace with room-picker
+            self.ship.room_list[self.shield_room_id].type = const.SHIELD
+            self.state = const.INSTALLING
+            self.pause()
+            install_text = 'Antiipating that your systems will soon start breaking down from the fire, you buy a repair system. ' + \
+                '(Click on a room to place it there)'
+            self.active_text_box = TextBox(install_text, const.MED, 'NEW SYSTEM')
+            self.active_text_box.add_button("Resume", const.GREEN)
 
     def level_up(self):
         self.level += 1
@@ -161,6 +172,17 @@ class Game:
                     self.state = const.REPAIRING
                 elif self.state == const.REPAIRING:
                     self.state = const.PLAYING
+        
+        if self.state == const.INSTALLING:
+            for room_id in range(len(self.ship.room_list)):
+                if self.ship.room_list[room_id].moused_over and self.ship.room_list[room_id].type == const.EMPTY:
+                    if self.level == 2:
+                        self.ship.room_list[room_id].type = const.SHIELD
+                        self.shield_room_id = room_id
+                    elif self.level == 3:
+                        self.ship.room_list[room_id].type = const.REPAIR
+                    self.state = const.PLAYING
+                    self.unpause()
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
             # Here is where I'll have to figure out how to add functionality
@@ -185,6 +207,8 @@ class Game:
                 self.state = const.PLAYING
                 self.active_text_box = None
                 return
+            if button_list[0].moused_over and self.state == const.INSTALLING:
+                self.active_text_box = None
             # The first button of tutorial text advances the tutorial, unless tutorial is finished.
             if button_list[0].moused_over and self.state == const.TUTORIAL:
                 if self.tut_progress >= 10: # last tutorial text
@@ -264,7 +288,7 @@ class Game:
         """Checks if fire and sprinklers need to activate, checks if you've won or lost,
         and does whatever other things need to happen each frame.
         """
-        if self.state == const.PLAYING:
+        if self.state == const.PLAYING or self.state == const.REPAIRING:
             # Check if you've lost the game
             if self.ship.num_onfire == 0:
                 self.state = const.FIRE_OUT
@@ -339,6 +363,8 @@ class Game:
                         room_id = const.SHIELD
                     # make a module break and require repairs
                     self.start_repair(room_id)
+            if self.state == const.REPAIRING and self.ship.disabled_systems[7]:
+                self.state = const.PLAYING
 
             # Check fire
             if current_time - self.last_f_tick >= self.f_tick_time:
@@ -350,6 +376,7 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
+                self.dashboard.repair_disabled = self.ship.disabled_systems[7]
                 # Checks event goal
                 if self.event_room is not None and self.event_target_flvl == 2 and self.event_room.fire_level == 2:
                     self.event_room.is_event = False
@@ -378,6 +405,7 @@ class Game:
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
+                self.dashboard.repair_disabled = self.ship.disabled_systems[7]
                 # Checks event goal
                 if self.event_room is not None and self.event_target_flvl == 0 and self.event_room.fire_level <= 1:
                     self.event_room.is_event = False
