@@ -154,6 +154,8 @@ class Game:
             num_systems = 4
         elif self.level == 2:
             num_systems = 5
+        elif self.level == 3:
+            num_systems = 5
         event_room_id = random.randint(2, num_systems)
         for i in self.ship.room_list:
             if i.type == event_room_id:
