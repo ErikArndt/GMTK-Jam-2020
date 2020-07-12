@@ -443,7 +443,10 @@ class Game:
 
         else:
             self.ship.draw()
-            self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
+            if self.state == const.REPAIRING:
+                self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left, self.level, True)
+            else:
+                self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left, self.level, False)
             if self.active_text_box:
                 self.active_text_box.draw(self.surface)
         # red flash when you take damage
