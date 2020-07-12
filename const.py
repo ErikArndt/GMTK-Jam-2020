@@ -35,11 +35,11 @@ WIN_LENGTH = 800 # arbitrary, feel free to change
 WIN_HEIGHT = 600 # arbitrary, feel free to change
 
 ## ******* FONTS ************
-DEFAULT_FONT = pygame.font.Font('nasalization-rg.ttf', 24)
-DEFAULT_FONT_SM = pygame.font.Font('nasalization-rg.ttf', 16)
-TITLE_FONT = pygame.font.Font('ethnocentric-rg.ttf', 60)
-TITLE_FONT_SM = pygame.font.Font('ethnocentric-rg.ttf', 24)
-DIGITAL_FONT = pygame.font.Font('digital-readout-rg.ttf', 60) # mainly used for numbers
+DEFAULT_FONT = pygame.font.Font('fonts/nasalization-rg.ttf', 24)
+DEFAULT_FONT_SM = pygame.font.Font('fonts/nasalization-rg.ttf', 16)
+TITLE_FONT = pygame.font.Font('fonts/ethnocentric-rg.ttf', 60)
+TITLE_FONT_SM = pygame.font.Font('fonts/ethnocentric-rg.ttf', 24)
+DIGITAL_FONT = pygame.font.Font('fonts/digital-readout-rg.ttf', 60) # mainly used for numbers
 
 ## **** TEXT BOX SIZES ******
 SMALL = 0

@@ -13,22 +13,22 @@ def init_images():
     a method to call that loads images at the right time. This is that method.
     """
     # Placeholder image
-    IMAGES['cactus'] = pygame.image.load('Cactus_coolboy.png').convert_alpha()
+    IMAGES['cactus'] = pygame.image.load('images/Cactus_coolboy.png').convert_alpha()
 
     # Rooms
-    IMAGES['empty_room'] = pygame.image.load('room_template.png').convert_alpha()
+    IMAGES['empty_room'] = pygame.image.load('images/room_template.png').convert_alpha()
     IMAGES['empty_room'] = pygame.transform.scale(IMAGES['empty_room'], (70, 70))
 
     # Fire
     IMAGES['fire_lvl_1'] = []
-    IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_1.png').convert_alpha())
-    IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_2.png').convert_alpha())
-    IMAGES['fire_lvl_1'].append(pygame.image.load('lvl_1_frame_3.png').convert_alpha())
+    IMAGES['fire_lvl_1'].append(pygame.image.load('images/lvl_1_frame_1.png').convert_alpha())
+    IMAGES['fire_lvl_1'].append(pygame.image.load('images/lvl_1_frame_2.png').convert_alpha())
+    IMAGES['fire_lvl_1'].append(pygame.image.load('images/lvl_1_frame_3.png').convert_alpha())
 
     IMAGES['fire_lvl_2'] = []
-    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 1.png').convert_alpha())
-    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 2.png').convert_alpha())
-    IMAGES['fire_lvl_2'].append(pygame.image.load('FLAME lvl 2 frame 3.png').convert_alpha())
+    IMAGES['fire_lvl_2'].append(pygame.image.load('images/FLAME lvl 2 frame 1.png').convert_alpha())
+    IMAGES['fire_lvl_2'].append(pygame.image.load('images/FLAME lvl 2 frame 2.png').convert_alpha())
+    IMAGES['fire_lvl_2'].append(pygame.image.load('images/FLAME lvl 2 frame 3.png').convert_alpha())
 
     for i in range(len(IMAGES['fire_lvl_1'])):
         IMAGES['fire_lvl_1'][i] = pygame.transform.scale(IMAGES['fire_lvl_1'][i], (70, 70))
@@ -37,10 +37,10 @@ def init_images():
         IMAGES['fire_lvl_2'][i] = pygame.transform.scale(IMAGES['fire_lvl_2'][i], (70, 70))
 
     # Sprinkler (Don't actually use this one, it's not technically ours)
-    IMAGES['sprinkler'] = pygame.image.load('stardew_sprinkler.png').convert_alpha()
+    IMAGES['sprinkler'] = pygame.image.load('images/stardew_sprinkler.png').convert_alpha()
 
     # Radar objects
-    alien_ship_img = pygame.image.load('ship.png').convert_alpha()
+    alien_ship_img = pygame.image.load('images/ship.png').convert_alpha()
     IMAGES['alien_ship'] = pygame.transform.scale(alien_ship_img, (20, 20))
-    asteroid_img = pygame.image.load('asteroid.png').convert_alpha()
+    asteroid_img = pygame.image.load('images/asteroid.png').convert_alpha()
     IMAGES['asteroid'] = pygame.transform.scale(asteroid_img, (30, 30))
