@@ -15,6 +15,9 @@ def init_images():
     # Placeholder image
     IMAGES['cactus'] = pygame.image.load('images/Cactus_coolboy.png').convert_alpha()
 
+    # Ship
+    IMAGES['ship'] = pygame.image.load('images/our_ship.png').convert_alpha()
+
     # Rooms
     IMAGES['empty_room'] = pygame.image.load('images/room_template.png').convert_alpha()
     IMAGES['empty_room'] = pygame.transform.scale(IMAGES['empty_room'], (70, 70))
