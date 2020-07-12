@@ -1,6 +1,7 @@
 import random
 import pygame
 from room import Room
+from img import IMAGES
 from sound import SOUNDS
 import const
 
@@ -95,6 +96,7 @@ class Ship:
         return self.disabled_systems[system]
 
     def draw(self):
+        self.surface.blit(IMAGES['ship'], (10, 10))
         # Draw connections before drawing rooms
         for room in self.room_list:
             for adj in room.adjacent:
