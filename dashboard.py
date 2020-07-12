@@ -112,7 +112,7 @@ class Dashboard:
 
         self.laser_button_n = DashButton((self.x_pos + 510, self.y_pos + 30, 70, 70))
         self.laser_button_s = DashButton((self.x_pos + 510, self.y_pos + 110, 70, 70))
-        self.repair_switch = DashButton((self.x_pos + 300, self.y_pos + 70, 70, 70))
+        self.repair_switch = DashButton((self.x_pos + 350, self.y_pos + 70, 150, 100))
         self.laser_n_disabled = False
         self.laser_s_disabled = False
         self.repair_disabled = False
@@ -198,6 +198,8 @@ class Dashboard:
         # repair button
         repair_text = const.DEFAULT_FONT_SM.render('Repair', True, const.BLACK)
         self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
-        #if repair_state:
+        if repair_state:
+            self.surface.blit(IMAGES['lever'], (self.x_pos + 240, self.y_pos + 100))
+
 
 
