@@ -198,7 +198,7 @@ class Game:
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
 
             if current_time - self.last_r_tick >= self.r_tick_time:
-                shields_up = False # replace with actual method call
+                shields_up = self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
                 self.last_r_tick = current_time

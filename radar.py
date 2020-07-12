@@ -36,7 +36,8 @@ class Radar:
         self.asteroids = []
         self.disabled = False
 
-        self.add_alien(const.NORTH) # for testing
+        self.add_alien(const.SOUTH) # for testing
+        self.add_asteroid(const.SOUTHWEST) # for testing
 
     def add_alien(self, direction):
         if direction == const.NORTH:
@@ -95,9 +96,32 @@ class Radar:
     def draw_aliens(self, surface):
         if len(self.alien_queue_N) > 0 and self.alien_queue_N[0].distance < 4:
             alien_dist = self.alien_queue_N[0].distance
-            print(alien_dist)
             alien_img = pygame.transform.flip(IMAGES['alien_ship'], False, True)
             surface.blit(alien_img, (self.x_pos - 10, self.y_pos - alien_dist*20))
+        if len(self.alien_queue_S) > 0 and self.alien_queue_S[0].distance < 4:
+            alien_dist = self.alien_queue_S[0].distance
+            surface.blit(IMAGES['alien_ship'], (self.x_pos - 10, self.y_pos + (alien_dist - 1)*20))
+
+    def draw_asteroids(self, surface):
+        for asteroid in filter(lambda a: a.distance < 4, self.asteroids):
+            # These might seem like magic numbers, and that's because they are.
+            # Please don't change the size of the radar, it will completely screw this up.
+            if asteroid.direction == const.NORTHWEST:
+                asteroid_img = IMAGES['asteroid']
+                surface.blit(asteroid_img, (self.x_pos - asteroid.distance*15 - 15, \
+                    self.y_pos - asteroid.distance*15 - 15))
+            elif asteroid.direction == const.NORTHEAST:
+                asteroid_img = pygame.transform.flip(IMAGES['asteroid'], True, False)
+                surface.blit(asteroid_img, (self.x_pos + (asteroid.distance - 1)*15, \
+                    self.y_pos - asteroid.distance*15 - 15))
+            elif asteroid.direction == const.SOUTHWEST:
+                asteroid_img = pygame.transform.flip(IMAGES['asteroid'], False, True)
+                surface.blit(asteroid_img, (self.x_pos - asteroid.distance*15 - 15, \
+                    self.y_pos + (asteroid.distance - 1)*15))
+            elif asteroid.direction == const.SOUTHEAST:
+                asteroid_img = pygame.transform.flip(IMAGES['asteroid'], True, True)
+                surface.blit(asteroid_img, (self.x_pos + (asteroid.distance - 1)*15, \
+                    self.y_pos + (asteroid.distance - 1)*15))
 
     def draw(self, surface):
         pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
@@ -107,4 +131,5 @@ class Radar:
         pygame.draw.line(surface, (50, 100, 50), (self.x_pos - self.radius, self.y_pos), (self.x_pos + self.radius, self.y_pos), 2)
         pygame.draw.line(surface, (50, 100, 50), (self.x_pos, self.y_pos - self.radius), (self.x_pos, self.y_pos + self.radius), 2)
         self.draw_aliens(surface)
+        self.draw_asteroids(surface)
         self.draw_radar_hand(surface)
