@@ -8,6 +8,7 @@ from dashboard import Dashboard
 from ship import Ship
 from text import TextBox
 from levels import LEVEL_DATA
+from sound import SOUNDS
 import tutorial
 
 SPRINKLER_LIMIT = 3
@@ -127,13 +128,20 @@ class Game:
                         if room.sprinkling:
                             room.sprinkling = False
                             self.ship.num_sprinkling -= 1
+                            SOUNDS['press'].play()
                         elif not room.sprinkling and self.ship.num_sprinkling < SPRINKLER_LIMIT:
                             room.sprinkling = True
                             self.ship.num_sprinkling += 1
+                            SOUNDS['press'].play()
+                        elif not room.sprinkling: # sprinkler limit reached
+                            SOUNDS['invalid'].play()
                     elif self.state == const.REPAIRING:
                         if room.is_breaking:
                             self.repair_room.is_breaking = False
                             self.repair_room = None
+                            SOUNDS['press'].play()
+                        else:
+                            SOUNDS['invalid'].play()
 
             # dashboard buttons must be checked individually
             if self.dashboard.laser_button_n.moused_over and \

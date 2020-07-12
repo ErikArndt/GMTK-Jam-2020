@@ -1,6 +1,7 @@
 import pygame
 import const
 from img import IMAGES
+from sound import SOUNDS
 from radar import Radar
 
 BORDER_SIZE = 10 # pixels around edge of dashboard
@@ -124,6 +125,8 @@ class Dashboard:
             damage (int, optional): Damage dealt. Defaults to 1.
         """
         self.sensors.hull_bar.change_value(damage*-1)
+        if damage is not 0:
+            SOUNDS['damage'].play()
 
     def lose_water(self, water_loss=1):
         """Decreases the Water bar by the amount given, or 1 if none is given.
@@ -132,6 +135,8 @@ class Dashboard:
             water_loss (int, optional): Water spent. Defaults to 1.
         """
         self.sensors.water_bar.change_value(water_loss*-1)
+        if water_loss is not 0:
+            SOUNDS['sprinkler'].play()
 
     def get_health(self):
         """Getter that returns the health of the hull.
@@ -177,7 +182,7 @@ class Dashboard:
         # lasers
         laser_text = const.DEFAULT_FONT_SM.render('Lasers', True, const.BLACK)
         self.surface.blit(laser_text, (self.x_pos + 515, self.y_pos + BORDER_SIZE))
-        
+
         if not self.laser_n_disabled:
             pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
             pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 80), \

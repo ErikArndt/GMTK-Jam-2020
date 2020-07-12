@@ -7,6 +7,7 @@ import math
 import pygame
 import const
 from img import IMAGES
+from sound import SOUNDS
 
 class Alien:
     def __init__(self, direction):
@@ -46,6 +47,7 @@ class Radar:
         self.asteroids.append(Asteroid(direction))
 
     def fire_laser(self, direction):
+        SOUNDS['laser'].play()
         if direction == const.NORTH:
             if len(self.alien_queue_N) > 0:
                 self.alien_queue_N.pop(0)
