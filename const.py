@@ -33,6 +33,7 @@ ROOM_NAMES = ['empty', 'bridge', 'sensors', 'radar', 'port laser', 'starboard la
 BLACK = (0, 0, 0) # could also use pygame.Color('white'), but idk the difference
 WHITE = (255, 255, 255)
 GRAY = (50, 50, 50)
+LIGHTGRAY = (200, 200, 200)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)

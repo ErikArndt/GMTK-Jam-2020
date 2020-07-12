@@ -113,7 +113,7 @@ class TextBox:
         # Until I have a real image, a white rectangle with a gray border will have to do
         pygame.draw.rect(surface, const.GRAY, (self.x_pos - 5, self.y_pos - 5, \
             self.width + 10, self.height + 10), 10)
-        pygame.draw.rect(surface, const.WHITE, (self.x_pos, self.y_pos, self.width, self.height))
+        pygame.draw.rect(surface, const.LIGHTGRAY, (self.x_pos, self.y_pos, self.width, self.height))
 
         text_x = self.x_pos + MARGIN
         text_y = self.y_pos + MARGIN
@@ -140,7 +140,7 @@ class TextBox:
             title_y = round(self.y_pos - title_text.get_height())
             pygame.draw.rect(surface, const.GRAY, (title_x - 5, title_y - 5, title_text.get_width() + 10, \
                 title_text.get_height() + 10), 10)
-            pygame.draw.rect(surface, const.WHITE, (title_x, title_y, title_text.get_width(), \
+            pygame.draw.rect(surface, const.LIGHTGRAY, (title_x, title_y, title_text.get_width(), \
                 title_text.get_height()))
             surface.blit(title_text, (title_x, title_y))
 
