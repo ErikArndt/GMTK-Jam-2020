@@ -89,6 +89,9 @@ class Ship:
                     self.disabled_systems[i.type] = True
                 else:
                     self.disabled_systems[i.type] = False
+    
+    def is_disabled(self, system):
+        return self.disabled_systems[system]
 
     def draw(self):
         # Draw connections before drawing rooms
