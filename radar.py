@@ -61,13 +61,13 @@ class Radar:
             if north_alien.distance > 1:
                 north_alien.move()
             else:
-                damage_taken += 1
+                damage_taken += 0
         if len(self.alien_queue_S) > 0:
             south_alien = self.alien_queue_S[0]
             if south_alien.distance > 1:
                 south_alien.move()
             else:
-                damage_taken += 1
+                damage_taken += 0
         for asteroid in self.asteroids:
             if asteroid.distance > 1:
                 asteroid.move()
@@ -121,12 +121,18 @@ class Radar:
                     self.y_pos + (asteroid.distance - 1)*15))
 
     def draw(self, surface):
-        pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
-        pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), self.radius, 2)
-        pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(2*self.radius/3), 2)
-        pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(self.radius/3), 2)
-        pygame.draw.line(surface, (50, 100, 50), (self.x_pos - self.radius, self.y_pos), (self.x_pos + self.radius, self.y_pos), 2)
-        pygame.draw.line(surface, (50, 100, 50), (self.x_pos, self.y_pos - self.radius), (self.x_pos, self.y_pos + self.radius), 2)
-        self.draw_aliens(surface)
-        self.draw_asteroids(surface)
-        self.draw_radar_hand(surface)
+        if not self.disabled:
+            pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
+            pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), self.radius, 2)
+            pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(2*self.radius/3), 2)
+            pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(self.radius/3), 2)
+            pygame.draw.line(surface, (50, 100, 50), (self.x_pos - self.radius, self.y_pos), (self.x_pos + self.radius, self.y_pos), 2)
+            pygame.draw.line(surface, (50, 100, 50), (self.x_pos, self.y_pos - self.radius), (self.x_pos, self.y_pos + self.radius), 2)
+            self.draw_aliens(surface)
+            self.draw_asteroids(surface)
+            self.draw_radar_hand(surface)
+        else:
+            pygame.draw.circle(surface, (50, 50, 50), (self.x_pos, self.y_pos), self.radius)
+            fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
+            surface.blit(fire_text, (self.x_pos - (fire_text.get_width()/2), self.y_pos - 12))
+
