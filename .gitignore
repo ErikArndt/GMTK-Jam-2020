@@ -1,3 +1,4 @@
 # This specifies what files git should ignore when tracking changes.
 # They don't really matter, so we shouldn't be uploading them.
 /__pycache__/
+/build/
