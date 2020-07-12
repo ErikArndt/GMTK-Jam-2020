@@ -71,6 +71,12 @@ class Game:
                 self.state = const.PLAYING
             if self.state == const.PLAYING:
                 self.start_event()
+        if key == pygame.K_UP:
+            if self.state == const.PLAYING and not self.ship.is_disabled(const.LASER_PORT):
+                self.dashboard.radar.fire_laser(const.NORTH)
+        if key == pygame.K_DOWN:
+            if self.state == const.PLAYING and not self.ship.is_disabled(const.LASER_STBD):
+                self.dashboard.radar.fire_laser(const.SOUTH)
 
     def move_mouse(self, mouse_x, mouse_y):
         for room in self.ship.room_list:
@@ -102,9 +108,11 @@ class Game:
                         room.sprinkling = True
                         self.ship.num_sprinkling += 1
             # dashboard buttons must be checked individually
-            if self.dashboard.laser_button_n.moused_over:
+            if self.dashboard.laser_button_n.moused_over and \
+                not self.ship.is_disabled(const.LASER_PORT):
                 self.dashboard.radar.fire_laser(const.NORTH)
-            if self.dashboard.laser_button_s.moused_over:
+            if self.dashboard.laser_button_s.moused_over and \
+                not self.ship.is_disabled(const.LASER_STBD):
                 self.dashboard.radar.fire_laser(const.SOUTH)
 
         if self.active_text_box and len(self.active_text_box.buttons) > 0:
@@ -115,9 +123,13 @@ class Game:
                 self.state == const.HULL_OUT or self.state == const.BRIDGE_OUT):
                 self.begin()
                 return
-            # The first button of the WIN text advances to the next level.
-            if self.active_text_box.buttons[0].moused_over and self.state == const.WIN:
+            # The first button of the WIN_LEVEL text advances to the next level.
+            if self.active_text_box.buttons[0].moused_over and self.state == const.WIN_LEVEL:
                 self.level_up()
+                return
+            # The first button of the WIN_GAME text brings you back to the main menu
+            if self.active_text_box.buttons[0].moused_over and self.state == const.WIN_GAME:
+                self.begin()
                 return
             # The first button of the event text returns to normal gameplay
             if self.active_text_box.buttons[0].moused_over and self.state == const.EVENT:
@@ -196,15 +208,24 @@ class Game:
                 self.active_text_box = TextBox(game_over_text, const.MED, 'GAME OVER')
                 self.active_text_box.add_button('Back to Title', const.RED)
 
-            # Check if you've won the game
+            # Check if you've won the level or game
             if self.lightyears_left <= 0:
-                self.state = const.WIN
-                self.pause()
-                win_text = 'Your ship manages to reach the spaceport intact! You get a much-needed ' + \
-                    'chance to refill your water, repair your hull, and catch your breath. But you are ' + \
-                    'still a long way from home, so you must keep going!'
-                self.active_text_box = TextBox(win_text, const.MED, 'SPACEPORT REACHED')
-                self.active_text_box.add_button('Continue to level ' + str(self.level + 1), const.GREEN)
+                if self.level < 3:
+                    self.state = const.WIN_LEVEL
+                    self.pause()
+                    win_text = 'Your ship manages to reach the spaceport intact! You get a much-needed ' + \
+                        'chance to refill your water, repair your hull, and catch your breath. But you are ' + \
+                        'still a long way from home, so you must keep going!'
+                    self.active_text_box = TextBox(win_text, const.MED, 'SPACEPORT REACHED')
+                    self.active_text_box.add_button('Continue to level ' + str(self.level + 1), const.GREEN)
+                else:
+                    self.state = const.WIN_GAME
+                    self.pause()
+                    win_text = 'You glance away from the hectic state of your ship for a moment only ' + \
+                        'to be greeted by the blue and green planet you call home. You\'re finally back ' + \
+                        'to Earth! You and your cactus will remember this journey forever.'
+                    self.active_text_box = TextBox(win_text, const.MED, 'EARTH REACHED')
+                    self.active_text_box.add_button('Woohoo!', const.GREEN)
 
             # Check if you've travelled another lightyear
             current_time = time.time()
@@ -268,7 +289,7 @@ class Game:
                 self.last_r_tick = current_time
 
             # Check events
-            if self.event_room != None and current_time - self.event_start_time >= self.event_time:
+            if self.event_room is not None and current_time - self.event_start_time >= self.event_time:
                 if self.event_target_flvl == 0 and self.event_room.fire_level == 2 or \
                     self.event_target_flvl == 2 and self.event_room.fire_level <= 1:
                     self.dashboard.take_damage()
@@ -279,12 +300,8 @@ class Game:
         if self.state == const.MENU:
             draw_menu(self.surface)
 
-        elif self.state == const.PLAYING:
+        else:
             self.ship.draw()
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
-
-        if self.state == const.FIRE_OUT or self.state == const.HULL_OUT or \
-            self.state == const.BRIDGE_OUT or self.state == const.WIN or self.state == const.EVENT:
-            self.ship.draw()
-            self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
-            self.active_text_box.draw(self.surface) # these states should always have the text box
+            if self.active_text_box:
+                self.active_text_box.draw(self.surface)
