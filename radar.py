@@ -76,14 +76,18 @@ class Radar:
                 south_alien.move()
             else:
                 damage_taken += 1
-        for asteroid in self.asteroids:
+        # use while loop so you can properly remove asteroids
+        i = 0
+        while i < len(self.asteroids):
+            asteroid = self.asteroids[i]
             if asteroid.distance > 1:
                 asteroid.move()
+                i += 1
             elif shields_up:
-                self.asteroids.remove(asteroid)
+                self.asteroids.pop(i)
             else:
                 damage_taken += 1
-                self.asteroids.remove(asteroid)
+                self.asteroids.pop(i)
         return damage_taken
 
     def draw_radar_hand(self, surface):

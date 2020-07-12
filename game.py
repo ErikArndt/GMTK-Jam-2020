@@ -262,7 +262,7 @@ class Game:
 
             # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
-                shields_up = self.ship.is_disabled(const.SHIELD)
+                shields_up = not self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
                 self.last_r_tick = current_time
