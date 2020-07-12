@@ -13,7 +13,7 @@ class Ship:
             Room(200, 210, [1, 2, 5, 6], const.EMPTY),
             Room(300, 75, [2, 5, 7], const.SENSORS),
             Room(300, 165, [2, 3, 4, 6, 8, 9], const.EMPTY),
-            Room(300, 255, [3, 5, 10], const.REPAIR),
+            Room(300, 255, [3, 5, 10], const.EMPTY),
             Room(400, 30, [4, 8], const.LASER_PORT),
             Room(400, 120, [5, 7, 9, 11], const.EMPTY),
             Room(400, 210, [5, 8, 10, 12], const.EMPTY),
