@@ -125,8 +125,8 @@ class TextBox:
             text_y += 5
             text_height -= 5
         if self.cactus:
-            text_x += 80
-            text_width -= 80
+            text_x += 85
+            text_width -= 85
             cactus_img = pygame.transform.scale(IMAGES['cactus'], (80, 120))
             surface.blit(cactus_img, (self.x_pos + MARGIN, self.y_pos + MARGIN))
         draw_text(surface, self.text, const.BLACK, (text_x, text_y, text_width, text_height), self.font, True)

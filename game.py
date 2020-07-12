@@ -154,7 +154,7 @@ class Game:
                 return
             # The first button of tutorial text advances the tutorial, unless tutorial is finished.
             if button_list[0].moused_over and self.state == const.TUTORIAL:
-                if self.tut_progress >= 4: # last tutorial text
+                if self.tut_progress >= 10: # last tutorial text
                     self.unpause()
                     self.state = const.PLAYING
                     self.active_text_box = None

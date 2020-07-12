@@ -30,13 +30,52 @@ def get_text(progress):
             'a special form of interquazar-protostatic flames that can power our engines from ' + \
             'anywhere on the ship, as long as it doesn\'t go out!'
         tut_text_box = TextBox(tut_text, const.MED)
-        tut_text_box.set_position(300, 100)
+        tut_text_box.set_position(300, 150)
         tut_text_box.add_button('Cool!', const.GREEN)
     elif progress == 4:
         tut_text = 'Of course, flames tend to spread, and you don\'t want this fire to spread ' + \
             'too rapidly. If these flames reach certain rooms they can disable your systems, and ' + \
             'if they reach the bridge, you\'ll be burned alive!'
         tut_text_box = TextBox(tut_text, const.MED)
-        tut_text_box.set_position(300, 100)
+        tut_text_box.set_position(300, 150)
         tut_text_box.add_button('Not cool!', const.GREEN)
+    elif progress == 5:
+        tut_text = 'Luckily, we have a sprinkler system you can use to put out the flames. ' + \
+            'Just click a room to place a sprinkler, and it will start spraying water in that room. ' + \
+            'Click the room again to remove it.'
+        tut_text_box = TextBox(tut_text, const.MED)
+        tut_text_box.set_position(300, 90)
+        tut_text_box.add_button('Seems simple enough', const.GREEN)
+    elif progress == 6:
+        tut_text = 'Be careful, though, because you can only place 3 sprinklers at a time! ' + \
+            'You also have a limited amount of water that will deplete as the sprinklers run. ' + \
+            'The more sprinklers you\'ve placed, the faster it will deplete.'
+        tut_text_box = TextBox(tut_text, const.MED)
+        tut_text_box.set_position(300, 90)
+        tut_text_box.add_button('Now I\'m thirsty', const.GREEN)
+    elif progress == 7:
+        tut_text = 'One last thing I should mention: At certain times, alien ships may try to ' + \
+            'come at us and steal our interquazar flames. If not dealt with, these ships will keep ' + \
+            'firing at us until our hull is breached.'
+        tut_text_box = TextBox(tut_text, const.MED)
+        tut_text_box.add_button('That sounds bad', const.GREEN)
+    elif progress == 8:
+        tut_text = 'You can see these aliens coming on the radar in the bottom right, and you can ' + \
+            'use the port (top) and starboard (bottom) lasers to shoot them before they get close ' + \
+            'enough to fire at us.'
+        tut_text_box = TextBox(tut_text, const.MED)
+        tut_text_box.set_position(100, 250)
+        tut_text_box.add_button('This ship has lasers?!', const.GREEN)
+    elif progress == 9:
+        tut_text = 'Remember, if the radar room is on fire, you won\'t be able to see anything there, ' + \
+            'and if the laser rooms are on fire, you won\'t be able to fire at aliens. Manage the fire ' + \
+            'carefully and you should be fine.'
+        tut_text_box = TextBox(tut_text, const.MED)
+        tut_text_box.set_position(100, 250)
+        tut_text_box.add_button('Yeah, whatever', const.GREEN)
+    elif progress == 10:
+        tut_text = 'Well, that\'s about all the advice I have. It shouldn\'t take too long to reach ' + \
+            'the nearest spaceport. Good luck!'
+        tut_text_box = TextBox(tut_text, const.MED)
+        tut_text_box.add_button('We\'re screwed.', const.GREEN)
     return tut_text_box
