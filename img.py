@@ -59,3 +59,10 @@ def init_images():
     IMAGES['shield_symbol'] = pygame.transform.scale(shield_symbol, (40, 40))
     repair_symbol = pygame.image.load('images/repair transparent.png').convert_alpha()
     IMAGES['repair_symbol'] = pygame.transform.scale(repair_symbol, (40, 40))
+
+    # Dashboard
+    dashboard_nolever = pygame.image.load('images/dashboard_sans_lever.png').convert_alpha()
+    IMAGES['dashboard_sans_lever'] = pygame.transform.scale(dashboard_nolever, (800, 200))
+    dashboard_img = pygame.image.load('images/dashboard transparent.png').convert_alpha()
+    IMAGES['dashboard'] = pygame.transform.scale(dashboard_img, (800, 200))
+        

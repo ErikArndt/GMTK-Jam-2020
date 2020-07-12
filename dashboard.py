@@ -55,7 +55,6 @@ class ResourceBar:
             # do what's below, but vertical
             return
         else:
-            pygame.draw.rect(surface, (50, 50, 50), (self.x_pos, self.y_pos, self.length, BAR_WIDTH))
             pygame.draw.rect(surface, const.BLACK, (self.x_pos + BAR_BORDER, self.y_pos + BAR_BORDER, \
                 self.length - BAR_BORDER*2, BAR_WIDTH - BAR_BORDER*2))
             pygame.draw.rect(surface, self.colour, (self.x_pos + BAR_BORDER, self.y_pos + BAR_BORDER, \
@@ -67,15 +66,15 @@ class Sensors:
         self.y_pos = y_pos
         self.disabled = False
 
-        self.hull_bar = ResourceBar(self.x_pos + 80, self.y_pos + 10, 150, 10, (255, 0, 0))
-        self.water_bar = ResourceBar(self.x_pos + 80, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
+        self.hull_bar = ResourceBar(self.x_pos + 70, self.y_pos + 10, 150, 10, (255, 0, 0))
+        self.water_bar = ResourceBar(self.x_pos + 70, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
 
     def draw(self, surface):
         hull_text = const.DEFAULT_FONT_SM.render("Hull", True, const.BLACK)
-        surface.blit(hull_text, (self.x_pos + 70 - hull_text.get_width(), self.y_pos + 5))
+        surface.blit(hull_text, (self.x_pos + 78 - hull_text.get_width(), self.y_pos + 10))
 
         water_text = const.DEFAULT_FONT_SM.render("Water", True, const.BLACK)
-        surface.blit(water_text, (self.x_pos + 70 - water_text.get_width(), self.y_pos + 15 + BAR_WIDTH))
+        surface.blit(water_text, (self.x_pos + 78 - water_text.get_width(), self.y_pos + 20 + BAR_WIDTH))
 
         if not self.disabled:
             self.hull_bar.draw(surface)
@@ -106,7 +105,7 @@ class Dashboard:
         self.height = round(const.WIN_HEIGHT/3 - BORDER_SIZE)
 
         radar_radius = round(self.height/2) - 20
-        self.radar = Radar(self.x_pos + self.width - radar_radius - 10, \
+        self.radar = Radar(self.x_pos + 5 + self.width - radar_radius - 10, \
             self.y_pos + round(self.height/2), radar_radius)
 
         self.sensors = Sensors(self.x_pos, self.y_pos)
@@ -149,11 +148,13 @@ class Dashboard:
         """
         return self.sensors.water_bar.value
 
-    def draw(self, sprinklers, lightyears):
+    def draw(self, sprinklers, lightyears, level, repair_state):
         # Many values here are magic numbers. This layout will be pretty messed up if
         # we change WIN_LENGTH or WIN_HEIGHT
-        pygame.draw.rect(self.surface, (150, 50, 0), (self.x_pos, self.y_pos, \
-            self.width, self.height))
+        if level <= 2:
+            self.surface.blit(IMAGES['dashboard_sans_lever'], (self.x_pos-10, self.y_pos))
+        elif level == 3:
+            self.surface.blit(IMAGES['dashboard'], (self.x_pos-10, self.y_pos))
         radar_text = const.DEFAULT_FONT_SM.render('Radar', True, const.BLACK)
         self.surface.blit(radar_text, (self.x_pos + 600, self.y_pos + BORDER_SIZE))
         self.radar.draw(self.surface)
@@ -172,9 +173,9 @@ class Dashboard:
 
         # lightyears to destination
         number_text = const.DIGITAL_FONT.render(str(lightyears), True, const.YELLOW)
-        pygame.draw.rect(self.surface, const.BLACK, (self.x_pos + 80, self.y_pos + 110, \
+        pygame.draw.rect(self.surface, const.BLACK, (self.x_pos + 75, self.y_pos + 115, \
             number_text.get_width() + 20, number_text.get_height() + 10))
-        self.surface.blit(number_text, (self.x_pos + 90, self.y_pos + 120))
+        self.surface.blit(number_text, (self.x_pos + 85, self.y_pos + 125))
         lightyear_text = const.DEFAULT_FONT_SM.render('Lightyears to', True, const.BLACK)
         spaceport_text = const.DEFAULT_FONT_SM.render('Next Spaceport', True, const.BLACK)
         self.surface.blit(lightyear_text, (self.x_pos + 130, self.y_pos + 120))
@@ -184,20 +185,12 @@ class Dashboard:
         laser_text = const.DEFAULT_FONT_SM.render('Lasers', True, const.BLACK)
         self.surface.blit(laser_text, (self.x_pos + 515, self.y_pos + BORDER_SIZE))
 
-        if not self.laser_n_disabled:
-            pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
-            pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 80), \
-                (self.x_pos + 545, self.y_pos + 50), (self.x_pos + 560, self.y_pos + 80)])
-        else:
+        if self.laser_n_disabled:
             pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
             fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
             self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 53))
 
-        if not self.laser_s_disabled:
-            pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
-            pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 130), \
-                (self.x_pos + 545, self.y_pos + 160), (self.x_pos + 560, self.y_pos + 130)])
-        else:
+        if self.laser_s_disabled:
             pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
             fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
             self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 133))
@@ -205,10 +198,6 @@ class Dashboard:
         # repair button
         repair_text = const.DEFAULT_FONT_SM.render('Repair', True, const.BLACK)
         self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
-        if not self.repair_disabled:
-            pygame.draw.rect(self.surface, (0, 200, 0), (self.x_pos + 340, self.y_pos + 110, 70, 70))
-        else:
-            pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 340, self.y_pos + 110, 70, 70))
-            fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
-            self.surface.blit(fire_text, (self.x_pos + 340 + (70 - fire_text.get_width())/2, self.y_pos + 133))
+        #if repair_state:
+
 
