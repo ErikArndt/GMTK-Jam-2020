@@ -2,6 +2,7 @@ import time
 import random
 import pygame
 import const
+import util
 from menu import draw_menu
 from dashboard import Dashboard
 from ship import Ship
@@ -14,7 +15,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 1
+        self.level = 3
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -41,6 +42,8 @@ class Game:
         self.lightyear_length = 10 # seconds it takes to travel 1 lightyear
         self.last_lightyear_tick = time.time()
         self.lightyears_left = 9
+
+        self.damage_anim_start = 0
 
         self.is_paused = False
         self.time_paused = None
@@ -338,6 +341,8 @@ class Game:
                 shields_up = not self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
+                if damage_taken > 0:
+                    self.damage_anim_start = time.time()
                 
                 self.last_r_tick = current_time
 
@@ -346,6 +351,7 @@ class Game:
                 if self.event_target_flvl == 0 and self.event_room.fire_level == 2 or \
                     self.event_target_flvl == 2 and self.event_room.fire_level <= 1:
                     self.dashboard.take_damage(3)
+                    self.damage_anim_start = time.time()
                 self.event_room.is_event = False
                 self.event_room = None
             
@@ -364,3 +370,17 @@ class Game:
             self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left)
             if self.active_text_box:
                 self.active_text_box.draw(self.surface)
+        # red flash when you take damage
+        current_time = time.time()
+        # from 0 to 0.1, transparency goes from 0 to 100, and then from 0.1 to 0.2 it goes back down
+        if current_time - self.damage_anim_start <= 0.1:
+            transparency = (current_time - self.damage_anim_start) * 1000
+        else:
+            transparency = (self.damage_anim_start - current_time + 0.2) * 1000
+        
+        if current_time - self.damage_anim_start <= 0.2:
+            overlay_surface = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT), pygame.HWSURFACE)
+            overlay_surface.set_alpha(transparency) # the surface is now semi-transparent
+            util.bevelled_rect(overlay_surface, (255, 0, 0), (0, 0, const.WIN_LENGTH, const.WIN_HEIGHT), \
+                15)
+            self.surface.blit(overlay_surface, (0, 0))
