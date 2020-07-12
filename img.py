@@ -38,8 +38,8 @@ def init_images():
     for i in range(len(IMAGES['fire_lvl_2'])):
         IMAGES['fire_lvl_2'][i] = pygame.transform.scale(IMAGES['fire_lvl_2'][i], (70, 70))
 
-    # Sprinkler (Don't actually use this one, it's not technically ours)
-    IMAGES['sprinkler'] = pygame.image.load('images/stardew_sprinkler.png').convert_alpha()
+    # Sprinkler
+    IMAGES['sprinkler'] = pygame.image.load('images/sprinkler transparent.png').convert_alpha()
 
     # Radar objects
     alien_ship_img = pygame.image.load('images/ship.png').convert_alpha()
