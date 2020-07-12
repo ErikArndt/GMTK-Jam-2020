@@ -23,6 +23,8 @@ LASER_PORT = 4
 LASER_STBD = 5
 SHIELD = 6
 
+room_names = ['empty', 'bridge', 'sensors', 'radar', 'port laser', 'starboard laser', 'shield']
+
 ## ******* COLOURS ***********
 BLACK = (0, 0, 0) # could also use pygame.Color('white'), but idk the difference
 WHITE = (255, 255, 255)

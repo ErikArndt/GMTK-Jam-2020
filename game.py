@@ -97,6 +97,7 @@ class Game:
         # it might need it in the future depending on what we use it for.
         if self.state == const.MENU:
             self.state = const.PLAYING
+            return
 
         if self.state == const.PLAYING:
             for room in self.ship.room_list:
@@ -168,12 +169,11 @@ class Game:
         self.state = const.EVENT
         self.pause()
         if self.event_target_flvl == 0:
-            event_text = 'The fire in one of your ship\'s rooms is starting to wear down the hull. If you don\'t extinguish it soon,' + \
-                'the ship will take damage. (The room in question is tinted green)'
+            event_text = 'The fire in your ship\'s ' + const.room_names[event_room_id] + ' room is starting to wear down the hull. ' + \
+                'If you don\'t extinguish it soon, the ship will take damage.'
         else:
-            event_text = 'A certain species of space termites has infested one of the rooms on your ship! ' + \
-                'You can exterminate them by setting the room on fire, but if you take too long they\'ll damage your hull. ' + \
-                '(The infested room is tinted green)'
+            event_text = 'A particularly annoying species of space termites has infested the ' + const.room_names[event_room_id] + ' room! ' + \
+                'You can exterminate them by setting the room on fire, but if you take too long they\'ll damage your hull. '
         self.active_text_box = TextBox(event_text, const.MED, 'EVENT')
         self.active_text_box.add_button('Resume', const.GREEN)
 
@@ -235,7 +235,7 @@ class Game:
                 level_str = LEVEL_DATA[self.level][str(self.lightyears_left)]
                 if 'event' in level_str:
                     ## do event thing here
-                    print('event should have happened')
+                    self.start_event()
                 if 'ship_n' in level_str:
                     self.dashboard.radar.add_alien(const.NORTH)
                 if 'ship_s' in level_str:
@@ -259,6 +259,7 @@ class Game:
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
+                self.dashboard.radar.disabled = self.ship.disabled_systems[3]
             if current_time - self.last_f_anim >= self.f_anim_time:
                 for i in self.ship.room_list:
                     if i.fire_anim_state >= 2:
@@ -280,12 +281,13 @@ class Game:
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
-
+                self.dashboard.radar.disabled = self.ship.disabled_systems[3]
             # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
                 shields_up = not self.ship.is_disabled(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
+                
                 self.last_r_tick = current_time
 
             # Check events
