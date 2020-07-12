@@ -22,7 +22,10 @@ class Room:
         self.type = room_type
 
     def draw(self, surface):
-        surface.blit(img.IMAGES['empty_room'], (self.x_pos, self.y_pos))
+        if self.type == const.BRIDGE:
+            surface.blit(img.IMAGES['bridge_room'], (self.x_pos, self.y_pos))
+        else:
+            surface.blit(img.IMAGES['empty_room'], (self.x_pos, self.y_pos))
         if self.fire_level > 0:
             if self.fire_level == 1:
                 surface.blit(img.IMAGES['fire_lvl_1'][self.fire_anim_state], (self.x_pos, self.y_pos))
@@ -38,22 +41,18 @@ class Room:
                 15)
             surface.blit(overlay_surface, (self.x_pos, self.y_pos))
         if self.type != const.EMPTY:
-            if self.type == const.BRIDGE:
-                letter = "B"
-            elif self.type == const.SENSORS:
-                letter = "S"
+            if self.type == const.SENSORS:
+                surface.blit(img.IMAGES['sensor_symbol'], (self.x_pos +15, self.y_pos +15))
             elif self.type == const.RADAR:
-                letter = "R"
+                surface.blit(img.IMAGES['radar_symbol'], (self.x_pos +15, self.y_pos +15))
             elif self.type == const.LASER_PORT:
-                letter = "L"
+                surface.blit(img.IMAGES['laser_symbol'], (self.x_pos +15, self.y_pos +15))
             elif self.type == const.LASER_STBD:
-                letter = "L"
+                surface.blit(img.IMAGES['laser_symbol_180'], (self.x_pos +15, self.y_pos +15))
             elif self.type == const.SHIELD:
-                letter = "SH"
+                surface.blit(img.IMAGES['shield_symbol'], (self.x_pos +15, self.y_pos +15))
             elif self.type == const.REPAIR:
-                letter = "RE"
-            room_text = const.TITLE_FONT_SM.render(letter, True, const.BLACK)
-            surface.blit(room_text, (self.x_pos + (70 - room_text.get_width())/2, self.y_pos + 23))
+                surface.blit(img.IMAGES['repair_symbol'], (self.x_pos +15, self.y_pos +15))
         if self.is_event:
             overlay_surface = pygame.Surface((self.size, self.size), pygame.HWSURFACE)
             overlay_surface.set_alpha(50) # the surface is now semi-transparent
