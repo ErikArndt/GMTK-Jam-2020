@@ -66,21 +66,21 @@ class Sensors:
         self.y_pos = y_pos
         self.disabled = False
 
-        self.hull_bar = ResourceBar(self.x_pos + 130, self.y_pos + 10, 150, 10, (255, 0, 0))
-        self.water_bar = ResourceBar(self.x_pos + 130, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
+        self.hull_bar = ResourceBar(self.x_pos + 80, self.y_pos + 10, 150, 10, (255, 0, 0))
+        self.water_bar = ResourceBar(self.x_pos + 80, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
 
     def draw(self, surface):
-        hull_text = const.TITLE_FONT_SM.render("HULL", True, const.BLACK)
-        surface.blit(hull_text, (self.x_pos + 120 - hull_text.get_width(), self.y_pos + 5))
+        hull_text = const.DEFAULT_FONT_SM.render("Hull", True, const.BLACK)
+        surface.blit(hull_text, (self.x_pos + 70 - hull_text.get_width(), self.y_pos + 5))
 
-        water_text = const.TITLE_FONT_SM.render("WATER", True, const.BLACK)
-        surface.blit(water_text, (self.x_pos + 120 - water_text.get_width(), self.y_pos + 15 + BAR_WIDTH))
+        water_text = const.DEFAULT_FONT_SM.render("Water", True, const.BLACK)
+        surface.blit(water_text, (self.x_pos + 70 - water_text.get_width(), self.y_pos + 15 + BAR_WIDTH))
 
         if not self.disabled:
             self.hull_bar.draw(surface)
             self.water_bar.draw(surface)
         else:
-            pygame.draw.rect(surface, (50, 50, 50), (self.x_pos + 130, self.y_pos + 10, 150, 10 + 2*BAR_WIDTH))
+            pygame.draw.rect(surface, (50, 50, 50), (self.x_pos + 80, self.y_pos + 10, 150, 10 + 2*BAR_WIDTH))
             fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
             surface.blit(fire_text, (self.x_pos + 130 + (150 - fire_text.get_width())/2, self.y_pos + 25))
 

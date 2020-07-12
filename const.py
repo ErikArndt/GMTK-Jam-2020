@@ -10,8 +10,9 @@ PLAYING = 1
 FIRE_OUT = 2
 HULL_OUT = 3
 BRIDGE_OUT = 4
-WIN = 5
+WIN_LEVEL = 5
 EVENT = 6
+WIN_GAME = 7
 
 ## ******* ROOM TYPES *******
 EMPTY = 0
