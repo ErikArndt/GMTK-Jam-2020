@@ -112,6 +112,8 @@ class Dashboard:
 
         self.laser_button_n = DashButton((self.x_pos + 510, self.y_pos + 30, 70, 70))
         self.laser_button_s = DashButton((self.x_pos + 510, self.y_pos + 110, 70, 70))
+        self.laser_n_disabled = False
+        self.laser_s_disabled = False
 
     def take_damage(self, damage=1):
         """Decreases the Hull bar by the amount given, or 1 if none is given.
@@ -173,9 +175,22 @@ class Dashboard:
         # lasers
         laser_text = const.DEFAULT_FONT_SM.render('Lasers', True, const.BLACK)
         self.surface.blit(laser_text, (self.x_pos + 515, self.y_pos + BORDER_SIZE))
-        pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
-        pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 80), \
-            (self.x_pos + 545, self.y_pos + 50), (self.x_pos + 560, self.y_pos + 80)])
-        pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
-        pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 130), \
-            (self.x_pos + 545, self.y_pos + 160), (self.x_pos + 560, self.y_pos + 130)])
+        
+        if not self.laser_n_disabled:
+            pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
+            pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 80), \
+                (self.x_pos + 545, self.y_pos + 50), (self.x_pos + 560, self.y_pos + 80)])
+        else:
+            pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 510, self.y_pos + 30, 70, 70))
+            fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
+            self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 53))
+
+        if not self.laser_s_disabled:
+            pygame.draw.rect(self.surface, (0, 0, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
+            pygame.draw.polygon(self.surface, const.RED, [(self.x_pos + 530, self.y_pos + 130), \
+                (self.x_pos + 545, self.y_pos + 160), (self.x_pos + 560, self.y_pos + 130)])
+        else:
+            pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 510, self.y_pos + 110, 70, 70))
+            fire_text = const.TITLE_FONT_SM.render("FIRE", True, (255, 127, 0))
+            self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 133))
+
