@@ -200,6 +200,11 @@ class Dashboard:
 
         # repair button
         repair_text = const.DEFAULT_FONT_SM.render('Repair', True, const.BLACK)
-        self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
-        if repair_state:
-            self.surface.blit(IMAGES['lever'], (self.x_pos + 320, self.y_pos + 133))
+        if not self.repair_disabled:
+            self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
+            if repair_state:
+                self.surface.blit(IMAGES['lever'], (self.x_pos + 320, self.y_pos + 133))
+        else:
+            pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 315, self.y_pos + 133, 135, 45))
+            fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
+            self.surface.blit(fire_text, (self.x_pos + 315 + (135 - fire_text.get_width())/2, self.y_pos + 143))
