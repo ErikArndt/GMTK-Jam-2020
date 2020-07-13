@@ -11,6 +11,6 @@ LEVEL_DATA = ['dummy', \
         '6': 'ast_se', '5': 'event', '4': '', '3': 'ship_s ast_ne', \
         '2': 'ast_sw ast_nw', '1': '', '0': ''}, \
     {'start_fire': 8, '9': '', '8': 'ship_n ast_se', '7': 'repair_sn', \
-        '6': 'ship_s ship_n', '5': 'event', '4': 'ast_ne', '3': 'repair_rd', \
-        '2': 'ship_s', '1': 'repair_sh ast_nw ast_ne ast_sw ast_se', '0': ''} \
+        '6': 'ship_s ship_n', '5': 'event', '4': 'ast_ne repair_rd', '3': '', \
+        '2': 'ship_s repair_sh', '1': 'ast_nw ast_ne ast_sw ast_se', '0': ''} \
 ]

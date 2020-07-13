@@ -17,7 +17,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 3
+        self.level = 1
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -35,7 +35,7 @@ class Game:
         self.event_start_time = 0
 
         self.repair_room = None
-        self.repair_time = 5
+        self.repair_time = 7
         self.repair_start_time = 0
 
         self.r_tick_time = 2   # seconds between radar ticks
