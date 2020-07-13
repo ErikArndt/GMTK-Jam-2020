@@ -17,7 +17,7 @@ class Game:
     def __init__(self, surface):
         self.surface = surface
         self.state = const.MENU
-        self.level = 1
+        self.level = 3
         self.dashboard = Dashboard(self.surface)
         self.ship = Ship(self.surface, LEVEL_DATA[self.level]['start_fire'])
         self.active_text_box = None # can only have one at a time
@@ -151,15 +151,17 @@ class Game:
                             self.repair_room.is_breaking = False
                             self.repair_room = None
                             SOUNDS['press'].play()
+                            # Switch back to sprinkler mode for convenience
+                            self.state = const.PLAYING
                         else:
                             SOUNDS['invalid'].play()
 
             # dashboard buttons must be checked individually
             if self.dashboard.laser_button_n.moused_over and \
-                not self.ship.is_disabled(const.LASER_PORT):
+                self.ship.is_working(const.LASER_PORT):
                 self.dashboard.radar.fire_laser(const.NORTH)
             if self.dashboard.laser_button_s.moused_over and \
-                not self.ship.is_disabled(const.LASER_STBD):
+                self.ship.is_working(const.LASER_STBD):
                 self.dashboard.radar.fire_laser(const.SOUTH)
             if self.dashboard.cactus_button.moused_over:
                 self.pause()
@@ -167,12 +169,13 @@ class Game:
                 self.state = const.TUTORIAL
                 self.active_text_box = tutorial.get_text(self.tut_progress)
             if self.dashboard.repair_switch.moused_over and \
-                not self.ship.is_disabled(const.REPAIR):
+                self.ship.is_working(const.REPAIR):
                 if self.level == 3:
                     if self.state == const.PLAYING:
                         self.state = const.REPAIRING
                     elif self.state == const.REPAIRING:
                         self.state = const.PLAYING
+                    SOUNDS['press'].play()
 
         if self.state == const.INSTALLING:
             for room_id in range(len(self.ship.room_list)):
@@ -377,7 +380,9 @@ class Game:
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
+                self.dashboard.sensors.broken = self.ship.broken_systems[2]
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
+                self.dashboard.radar.broken = self.ship.broken_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
                 self.dashboard.repair_disabled = self.ship.disabled_systems[7]
@@ -406,7 +411,9 @@ class Game:
                 # Update which systems are disabled
                 self.ship.check_systems()
                 self.dashboard.sensors.disabled = self.ship.disabled_systems[2]
+                self.dashboard.sensors.broken = self.ship.broken_systems[2]
                 self.dashboard.radar.disabled = self.ship.disabled_systems[3]
+                self.dashboard.radar.broken = self.ship.broken_systems[3]
                 self.dashboard.laser_n_disabled = self.ship.disabled_systems[4]
                 self.dashboard.laser_s_disabled = self.ship.disabled_systems[5]
                 self.dashboard.repair_disabled = self.ship.disabled_systems[7]
@@ -416,7 +423,7 @@ class Game:
                     self.event_room = None
             # Check radar
             if current_time - self.last_r_tick >= self.r_tick_time:
-                shields_up = not self.ship.is_disabled(const.SHIELD)
+                shields_up = self.ship.is_working(const.SHIELD)
                 damage_taken = self.dashboard.radar.radar_tick(shields_up)
                 self.dashboard.take_damage(damage_taken)
                 if damage_taken > 0:

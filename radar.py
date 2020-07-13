@@ -36,6 +36,7 @@ class Radar:
         self.alien_queue_S = []
         self.asteroids = []
         self.disabled = False
+        self.broken = False
 
     def add_alien(self, direction):
         if direction == const.NORTH:
@@ -135,7 +136,7 @@ class Radar:
                     self.y_pos + (asteroid.distance - 1)*15))
 
     def draw(self, surface):
-        if not self.disabled:
+        if not (self.disabled or self.broken):
             pygame.draw.circle(surface, (0, 50, 0), (self.x_pos, self.y_pos), self.radius)
             pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), self.radius, 2)
             pygame.draw.circle(surface, (50, 100, 50), (self.x_pos, self.y_pos,), int(2*self.radius/3), 2)
@@ -145,8 +146,11 @@ class Radar:
             self.draw_aliens(surface)
             self.draw_asteroids(surface)
             self.draw_radar_hand(surface)
-        else:
+        elif self.broken:
+            pygame.draw.circle(surface, (50, 50, 50), (self.x_pos, self.y_pos), self.radius)
+            fire_text = const.TITLE_FONT_SM.render("OUT", True, (255, 127, 0))
+            surface.blit(fire_text, (self.x_pos - (fire_text.get_width()/2), self.y_pos - 12))
+        else: # self.disabled
             pygame.draw.circle(surface, (50, 50, 50), (self.x_pos, self.y_pos), self.radius)
             fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
             surface.blit(fire_text, (self.x_pos - (fire_text.get_width()/2), self.y_pos - 12))
-

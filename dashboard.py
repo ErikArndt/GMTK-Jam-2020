@@ -18,7 +18,6 @@ class ResourceBar:
         self.fill_width = self.length - BAR_BORDER*2
         self.colour = colour
         self.vertical = vertical
-        self.disabled = False
 
     def recalculate_fill_width(self):
         self.fill_width = round((self.value / self.max) * (self.length - BAR_BORDER*2))
@@ -65,18 +64,23 @@ class Sensors:
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.disabled = False
+        self.broken = False
 
         self.hull_bar = ResourceBar(self.x_pos + 70, self.y_pos + 10, 150, 10, (255, 0, 0))
         self.water_bar = ResourceBar(self.x_pos + 70, self.y_pos + 20 + BAR_WIDTH, 150, 50, (50, 50, 255))
 
     def draw(self, surface):
-        if not self.disabled:
-            self.hull_bar.draw(surface)
-            self.water_bar.draw(surface)
-        else:
+        if self.broken:
+            pygame.draw.rect(surface, (50, 50, 50), (self.x_pos + 70, self.y_pos + 10, 150, 10 + 2*BAR_WIDTH))
+            fire_text = const.TITLE_FONT_SM.render("OUT", True, (255, 127, 0))
+            surface.blit(fire_text, (self.x_pos + 70 + (150 - fire_text.get_width())/2, self.y_pos + 25))
+        elif self.disabled:
             pygame.draw.rect(surface, (50, 50, 50), (self.x_pos + 70, self.y_pos + 10, 150, 10 + 2*BAR_WIDTH))
             fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
             surface.blit(fire_text, (self.x_pos + 70 + (150 - fire_text.get_width())/2, self.y_pos + 25))
+        else:
+            self.hull_bar.draw(surface)
+            self.water_bar.draw(surface)
 
 class DashButton:
     def __init__(self, rect):
@@ -146,7 +150,7 @@ class Dashboard:
         # Many values here are magic numbers. This layout will be pretty messed up if
         # we change WIN_LENGTH or WIN_HEIGHT
         self.radar.draw(self.surface)
-        if not self.sensors.disabled:
+        if not (self.sensors.disabled or self.sensors.broken):
             self.sensors.draw(self.surface)
         number_text = const.DIGITAL_FONT.render(str(lightyears), True, const.YELLOW)
         pygame.draw.rect(self.surface, const.BLACK, (self.x_pos + 75, self.y_pos + 115, \
@@ -157,7 +161,7 @@ class Dashboard:
             self.surface.blit(IMAGES['dashboard_sans_lever'], (self.x_pos-10, self.y_pos))
         elif level == 3:
             self.surface.blit(IMAGES['dashboard'], (self.x_pos-10, self.y_pos))
-        if self.sensors.disabled:
+        if self.sensors.disabled or self.sensors.broken:
             self.sensors.draw(self.surface)
 
         hull_text = const.DEFAULT_FONT_SM.render("Hull", True, const.BLACK)
@@ -199,7 +203,9 @@ class Dashboard:
             self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 133))
 
         # repair button
-        repair_text = const.DEFAULT_FONT_SM.render('Repair', True, const.BLACK)
-        self.surface.blit(repair_text, (self.x_pos + 340, self.y_pos + 90))
+        repair_text = const.DEFAULT_FONT_SM.render('Repair Mode', True, const.BLACK)
+        self.surface.blit(repair_text, (self.x_pos + 330, self.y_pos + 90))
+        off_on_text = const.DEFAULT_FONT_SM.render('On            Off', True, const.BLACK)
+        self.surface.blit(off_on_text, (self.x_pos + 335, self.y_pos + 90 + repair_text.get_height()))
         if repair_state:
             self.surface.blit(IMAGES['lever'], (self.x_pos + 320, self.y_pos + 133))

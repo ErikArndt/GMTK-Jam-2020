@@ -32,6 +32,7 @@ class Ship:
         # empty, bridge, sensors, radar, laser (port / starboard)
         # see const.py
         self.disabled_systems = [False]*8
+        self.broken_systems = [False]*8
 
     def fire_tick(self):
         """Increases fire levels of rooms on fire, spreads fire to
@@ -87,13 +88,23 @@ class Ship:
     def check_systems(self):
         for i in self.room_list:
             if i.type != const.EMPTY:
-                if i.fire_level == 2 or i.is_broken:
+                if i.fire_level == 2:
                     self.disabled_systems[i.type] = True
                 else:
                     self.disabled_systems[i.type] = False
+                if i.is_broken:
+                    self.broken_systems[i.type] = True
+                else:
+                    self.broken_systems[i.type] = False
 
     def is_disabled(self, system):
         return self.disabled_systems[system]
+
+    def is_broken(self, system):
+        return self.broken_systems[system]
+
+    def is_working(self, system):
+        return not (self.is_disabled(system) or self.is_broken(system))
 
     def draw(self):
         self.surface.blit(IMAGES['ship'], (10, 10))
