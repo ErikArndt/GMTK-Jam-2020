@@ -146,7 +146,7 @@ class Dashboard:
         """
         return self.sensors.water_bar.value
 
-    def draw(self, sprinklers, lightyears, level, repair_state):
+    def draw(self, sprinklers, lightyears, level, is_repairing=False):
         # Many values here are magic numbers. This layout will be pretty messed up if
         # we change WIN_LENGTH or WIN_HEIGHT
         self.radar.draw(self.surface)
@@ -203,9 +203,15 @@ class Dashboard:
             self.surface.blit(fire_text, (self.x_pos + 510 + (70 - fire_text.get_width())/2, self.y_pos + 133))
 
         # repair button
-        repair_text = const.DEFAULT_FONT_SM.render('Repair Mode', True, const.BLACK)
-        self.surface.blit(repair_text, (self.x_pos + 330, self.y_pos + 90))
-        off_on_text = const.DEFAULT_FONT_SM.render('On            Off', True, const.BLACK)
-        self.surface.blit(off_on_text, (self.x_pos + 335, self.y_pos + 90 + repair_text.get_height()))
-        if repair_state:
-            self.surface.blit(IMAGES['lever'], (self.x_pos + 320, self.y_pos + 133))
+        if level >= 3:
+            repair_text = const.DEFAULT_FONT_SM.render('Repair Mode', True, const.BLACK)
+            self.surface.blit(repair_text, (self.x_pos + 330, self.y_pos + 90))
+            off_on_text = const.DEFAULT_FONT_SM.render('On            Off', True, const.BLACK)
+            if not self.repair_disabled:
+                self.surface.blit(off_on_text, (self.x_pos + 335, self.y_pos + 90 + repair_text.get_height()))
+                if not is_repairing:
+                    self.surface.blit(IMAGES['lever'], (self.x_pos + 320, self.y_pos + 133))
+            else:
+                pygame.draw.rect(self.surface, (50, 50, 50), (self.x_pos + 315, self.y_pos + 133, 135, 45))
+                fire_text = const.TITLE_FONT_SM.render("ON FIRE", True, (255, 127, 0))
+                self.surface.blit(fire_text, (self.x_pos + 315 + (135 - fire_text.get_width())/2, self.y_pos + 143))

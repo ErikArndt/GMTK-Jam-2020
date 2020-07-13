@@ -451,10 +451,8 @@ class Game:
 
         else:
             self.ship.draw()
-            if self.state == const.REPAIRING:
-                self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left, self.level, True)
-            else:
-                self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left, self.level, False)
+            self.dashboard.draw(SPRINKLER_LIMIT - self.ship.num_sprinkling, self.lightyears_left, \
+                self.state == const.REPAIRING)
             if self.active_text_box:
                 self.active_text_box.draw(self.surface)
         # red flash when you take damage
@@ -464,7 +462,7 @@ class Game:
             transparency = (current_time - self.damage_anim_start) * 1000
         else:
             transparency = (self.damage_anim_start - current_time + 0.2) * 1000
-        
+
         if current_time - self.damage_anim_start <= 0.2:
             overlay_surface = pygame.Surface((const.WIN_LENGTH, const.WIN_HEIGHT), pygame.HWSURFACE)
             overlay_surface.set_alpha(transparency) # the surface is now semi-transparent
